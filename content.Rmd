@@ -1,0 +1,42 @@
+---
+title: "#30diasdegraficos"
+author: "José Antonio León Rosado"
+date: "13/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción
+
+Desde R para Ciencia de Datos han comenzado el reto de compartir un gráfico cada día a partir del 12 de mayo. Como el objetivo de esta iniciativa es aprender sobre visualización de datos y ese es uno de mis objetivos actualmente, me voy a sumar al reto. Esta comunidad propone retos habitualmente en Twitter y su mayor aportación es [https://es.r4ds.hadley.nz/](la traducción del libro R para Ciencia de Datos), del creador de Tidyverse Hadley Wickham.
+
+Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especialmente, con ggplot2, un must para para visualización de datos. ¡Allá vamos!
+
+Lo primero será cargar Tidyverse, algo fundamental en todo análisis de datos con R.
+
+```{r cars}
+library(tidyverse)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+library(jsonlite)
+
+url_json <- "https://datos.madrid.es/portal/site/egob/menuitem.ac61933d6ee3c31cae77ae7784f1a5a0/?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=json&file=0&filename=300356-0-monumentos-ciudad-madrid&mgmtid=eb8e993ae322b610VgnVCM1000001d4a900aRCRD&preview=full"
+data <- fromJSON(url_json)
+
+data <- data[[2]][[6]]
+monumentos <- data.frame(distrito = data$district[1], barrio = data$area[1])
+monumentos <- monumentos %>% rename(distrito = 1, barrio = 2)
+```
+
+```{r}
+monumentos <- monumentos %>% separate(distrito, c(NA,'distrito'), sep="Distrito/")
+monumentos <- monumentos %>% separate(barrio, c(NA,'barrio'), sep="Barrio/")
+```
