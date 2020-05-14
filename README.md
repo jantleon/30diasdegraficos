@@ -8,8 +8,13 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 
 **Día 1: Gráfico de barras con datos de la API REST del Ayuntamiento de Madrid**
 
-![](plots/day1.png)
+<p align="center">
+![](plots/day1.png){width=600px}
+</p>
+
 
 **Día 2: Gráfico de líneas con la evolución de las llamadas al 016 y media móvil**
 
-![](plots/day2.png)
+<p align="center">
+![](plots/day2.png){width=600x}
+</p>
