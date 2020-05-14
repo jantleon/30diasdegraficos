@@ -9,7 +9,7 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 **Día 1: Gráfico de barras con datos de la API REST del Ayuntamiento de Madrid**
 
 <p align="center">
-![](plots/day1.png){width=600px}
+<img src="plots/day1.png" alt="drawing" width="600"/>
 </p>
 
 
