@@ -19,15 +19,15 @@ Lo primero será cargar Tidyverse, algo fundamental en todo análisis de datos c
 
 ```{r cars}
 library(tidyverse)
+library(jsonlite)
+library(hrbrthemes)
 ```
 
 ## Including Plots
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-library(jsonlite)
-
+```{r loaddata, echo=FALSE}
 url_json <- "https://datos.madrid.es/portal/site/egob/menuitem.ac61933d6ee3c31cae77ae7784f1a5a0/?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=json&file=0&filename=300356-0-monumentos-ciudad-madrid&mgmtid=eb8e993ae322b610VgnVCM1000001d4a900aRCRD&preview=full"
 data <- fromJSON(url_json)
 
@@ -39,4 +39,39 @@ monumentos <- monumentos %>% rename(distrito = 1, barrio = 2)
 ```{r}
 monumentos <- monumentos %>% separate(distrito, c(NA,'distrito'), sep="Distrito/")
 monumentos <- monumentos %>% separate(barrio, c(NA,'barrio'), sep="Barrio/")
+
+monumentos <- monumentos %>%
+                mutate(distrito = case_when(distrito == 'Vicalvaro' ~ 'Vicálvaro',
+                       distrito == 'Chamberi' ~ 'Chamberí',
+                       distrito == 'Chamartin' ~ 'Chamartín',
+                       distrito == 'PuenteDeVallecas' ~ 'Puente de Vallecas',
+                       distrito == 'CiudadLineal' ~ 'Ciudad Lineal',
+                       distrito == 'Fuencarral-ElPardo' ~ 'Fuencarral-El Pardo',
+                       distrito == 'SanBlas-Canillejas' ~ 'San Blas - Canillejas',
+                       distrito == 'VilladeVallecas' ~ 'Villa de Vallecas',
+                       distrito == 'SanBlas' ~ 'San Blas - Canillejas',
+                       distrito == 'Tetuan' ~ 'Tetuán',
+                       distrito == 'VillaDeVallecas' ~ 'Villa de Vallecas',
+                       TRUE ~ as.character(distrito)))
 ```
+
+```{r}
+monumentos %>% 
+  filter(!is.na(distrito) & distrito != "Distrito") %>%
+  group_by(distrito) %>% 
+  summarize(Count=n()) %>%
+  ggplot(aes(reorder(distrito, Count), Count)) + 
+    geom_bar(stat = "identity", fill = 	"deepskyblue3") +
+    geom_text(aes(label=Count), hjust=-0.2, size = 3) +
+    labs(title = "Número de monumentos en Madrid por distrito", caption = "Fuente: Portal de datos abiertos del Ayuntamiento de Madrid | @jantleon") +
+    theme_fivethirtyeight() +   
+    theme(axis.title=element_blank(),
+          axis.ticks.length = unit(-0.5, "cm"),
+          axis.ticks=element_blank(),
+          axis.text.x = element_blank()) +
+    coord_flip() +
+  ggsave("plot.png")
+    
+```
+
+Delete x axis
