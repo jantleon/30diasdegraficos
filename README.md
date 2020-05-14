@@ -16,5 +16,5 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 **Día 2: Gráfico de líneas con la evolución de las llamadas al 016 y media móvil**
 
 <p align="center">
-![](plots/day2.png){width=600x}
+<img src="plots/day2.png" alt="drawing" width="600"/>
 </p>
