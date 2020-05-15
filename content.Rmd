@@ -189,6 +189,6 @@ obegdp %>%
     ylab("% de población con obesidad") +
     xlab("PIB per cápita") +
     theme_minimal(base_family = "Bahnschrift", base_size = 12) +
-    ggsave("jitter.png", width = 8)
+    ggsave("plots/day3.png", width = 8)
 ```
 

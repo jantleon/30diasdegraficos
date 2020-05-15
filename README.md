@@ -18,3 +18,9 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 <p align="center">
 <img src="plots/day2.png" alt="drawing" width="1000"/>
 </p>
+
+**Día 3: Gráfico de dispersión con inner join de tres tablas de datos**
+
+<p align="center">
+<img src="plots/day3.png" alt="drawing" width="800"/>
+</p>
