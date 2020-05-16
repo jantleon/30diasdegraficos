@@ -191,7 +191,7 @@ obegdp %>%
     scale_y_continuous(limits = c(0,80)) +
     theme_minimal(base_family = "Bahnschrift", base_size = 12) +
     theme(plot.title = element_text(face = "bold")) +
-    ggsave("plots/day3.png", width = 8)
+    ggsave("plots/day3.png", height = 6)
 ```
 
 ## Día 4: Distribución de edad por equipo World Tour en la temporada 2020 (con facets y web scraping)
@@ -281,3 +281,35 @@ ciclistas %>%
   theme(plot.title = element_text(face = "bold")) +
   ggsave("plots/day4.png", width = 10)
 ```
+
+## Día 5: Diagrama de arco con las relaciones de vecindad de las áreas sanitarias de Castilla-La Mancha
+
+```{r}
+library(arcdiagram)
+library(igraph)
+library(randomcoloR)
+
+edgelist<-rbind(cbind(1:8,1:8),
+      c(1,2),
+      c(2,1), c(2,3), c(2,5), c(2,7),
+      c(3,2), c(3,4), c(3,5), c(3,6),
+      c(4,3), c(4,6),
+      c(5,2), c(5,3), c(5,6), c(5,7),
+      c(6,3), c(6,4), c(6,5), c(6,7), c(6,8),
+      c(7,2), c(7,5), c(7,6))
+
+# Etiquetamos los vértices
+nombres_area <- c("Guadalajara", "Cuenca", "Toledo", "Talavera de la Reina", "Mancha Centro", "Ciudad Real", "Albacete", "Puertollano")
+
+# Asignamos un tamaño a los vértices según el número de aristas que confluyen en él
+degrees<-(degree(graph.edgelist(edgelist, directed = TRUE))-2)/2
+
+# Dibujamos el gráfico de diagrama de arco
+png("plots/day5.png", width = 9, height = 5, units = 'in', res = 300)
+arcplot(edgelist, labels = nombres_area, lwd.arcs = 2, col.arcs = randomColor(length(edgelist),hue="blue"),
+        main="Relaciones de vecindad entre las áreas sanitarias de Castilla-La Mancha",font.main=2,  
+        cex.nodes = log(degrees)+0.5, col.nodes = "#b8e0f2", cex.labels = 0.6,
+        sub="@jantleon", font.sub=2, cex.sub=0.4, adj = 1)
+dev.off()
+```
+
