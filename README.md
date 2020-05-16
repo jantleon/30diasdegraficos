@@ -19,8 +19,14 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 <img src="plots/day2.png" alt="drawing" width="1000"/>
 </p>
 
-**Día 3: Gráfico de dispersión con inner join de tres tablas de datos**
+**Día 3: Gráfico de dispersión de porcentaje de obesidad por renta per cápita con inner join de tres tablas de datos**
 
 <p align="center">
 <img src="plots/day3.png" alt="drawing" width="800"/>
+</p>
+
+**Día 4: Distribución de edad por equipo World Tour en la temporada 2020 (con facets y web scraping)**
+
+<p align="center">
+<img src="plots/day4.png" alt="drawing" width="800"/>
 </p>
