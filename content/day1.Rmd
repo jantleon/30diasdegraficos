@@ -1,0 +1,84 @@
+---
+title: "Día 1: Gráfico de barras con datos de la API REST del Ayuntamiento de Madrid"
+author: "José Antonio León Rosado"
+date: "12/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+El primer día del reto comienza con uno de los tipos de gráfico más populares y sencillos de interpretar: el gráfico de barras. Para visualizar este gráfico utilizaré la librería ggplot2 (que forma parte de Tidyverse) y los datos que publica el Ayuntamiento de Madrid sobre monumentos de la ciudad en su REST API. Como estos datos se comparten en formato JSON, necesitaremos también la librería jsonlite, que nos permite trabajar con este formato en R.
+
+```{r loadjson, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(jsonlite)
+```
+
+Después descargo el JSON y almaceno los datos en un nuevo dataframe.
+
+```{r loaddata, echo=FALSE}
+url_json <- "https://datos.madrid.es/portal/site/egob/menuitem.ac61933d6ee3c31cae77ae7784f1a5a0/?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=json&file=0&filename=300356-0-monumentos-ciudad-madrid&mgmtid=eb8e993ae322b610VgnVCM1000001d4a900aRCRD&preview=full"
+data <- fromJSON(url_json)
+
+data <- data[[2]][[6]]
+monumentos <- data.frame(distrito = data$district[1])
+monumentos <- monumentos %>% rename(distrito = 1)
+```
+
+Los nombres del distrito venían en una URL, así que hay que extraerlos a partir de la variable que contiene esas direcciones. También cambio algunos nombres de distrito para que se agrupen correctamente, ya que había algunos nombres del mismo distrito pero con la diferencia de que en unos casos aparecía con tilde y en otras sin ella (Chamartin y Chamartín, por ejemplo).
+
+```{r tidydata}
+monumentos <- monumentos %>% separate(distrito, c(NA,'distrito'), sep="Distrito/")
+
+monumentos <- monumentos %>%
+                mutate(distrito = case_when(distrito == 'Vicalvaro' ~ 'Vicálvaro',
+                       distrito == 'Chamberi' ~ 'Chamberí',
+                       distrito == 'Chamartin' ~ 'Chamartín',
+                       distrito == 'PuenteDeVallecas' ~ 'Puente de Vallecas',
+                       distrito == 'CiudadLineal' ~ 'Ciudad Lineal',
+                       distrito == 'Fuencarral-ElPardo' ~ 'Fuencarral-El Pardo',
+                       distrito == 'SanBlas-Canillejas' ~ 'San Blas - Canillejas',
+                       distrito == 'VilladeVallecas' ~ 'Villa de Vallecas',
+                       distrito == 'SanBlas' ~ 'San Blas - Canillejas',
+                       distrito == 'Tetuan' ~ 'Tetuán',
+                       distrito == 'VillaDeVallecas' ~ 'Villa de Vallecas',
+                       TRUE ~ as.character(distrito)))
+```
+
+Creamos un tema para personalizar algunos parámetros estéticos del gráfico.
+
+```{r theme}
+theme_day1 <- function(...) 
+          {theme(axis.title=element_blank(),
+          text = element_text(family = "Bahnschrift"),
+          axis.ticks.length = unit(-0.5, "cm"),
+          axis.ticks=element_blank(),
+          axis.text.x = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          strip.background = element_blank(),
+          panel.background = element_rect(fill = 'white', colour = 'white'),
+          plot.title = element_text(size=16, face = "bold", hjust = 0.5))
+}
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+Después de algunas transformaciones, como filtrar los valores perdidos o incorrectos o calcular una variable con el número de casos para cada distrito, pintamos el gráfico con ggplot2. Como se puede ver, hemos aplicado el theme_day1 creado antes para darle una estética más atractiva que la que trae ggplot2 por defecto.
+
+```{r plot, message=FALSE}
+monumentos %>% 
+  filter(!is.na(distrito) & distrito != "Distrito") %>%
+  group_by(distrito) %>% 
+  summarize(Count=n()) %>%
+  ggplot(aes(reorder(distrito, Count), Count)) + 
+    geom_bar(stat = "identity", fill = 	"deepskyblue3") +
+    geom_text(aes(label=Count, family = "Bahnschrift"), hjust=-0.2, size = 3) +
+    labs(title = "Número de monumentos por distrito en Madrid ", caption = "Fuente: Portal de datos abiertos del Ayuntamiento de Madrid | @jantleon") +
+    theme_day1() +
+    coord_flip() +
+  ggsave("plots/day1.png")
+    
+```
