@@ -22,7 +22,7 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 **Día 3: Gráfico de dispersión de porcentaje de obesidad por renta per cápita con inner join de tres tablas de datos**
 
 <p align="center">
-<img src="content/plots/day3.png" alt="drawing" width="800"/>
+<img src="content/plots/day3.png" alt="drawing" width="600"/>
 </p>
 
 **Día 4: Distribución de edad por equipo World Tour en la temporada 2020 (con facets y web scraping)**
