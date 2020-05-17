@@ -18,6 +18,8 @@ library(tidyverse)
 library(rvest)
 library(xml2)
 
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+
 get_riders <- function(category, year){
 url <- paste0("https://www.procyclingstats.com/teams.php&s=", category ,"&year=", year)
 
@@ -77,14 +79,11 @@ Por último, cargamos el paquete "lemon" para conservar el eje en cada facet y c
 ```{r day4_plot, message=FALSE, warning=FALSE, fig.width = 10}
 library(lemon)
 
+ciclistas$age <- as.numeric(ciclistas$age)
+
 ciclistas <- ciclistas %>% 
   group_by(team) %>% 
   mutate(avgage = round(mean(age),1))
-
-ciclistas$age <- as.numeric(ciclistas$age)
-    
-ciclistas <- ciclistas %>% 
-  mutate(ciclistas = ciclistas)
 
 ciclistas %>% 
   filter(category == "WT") %>% 
@@ -98,5 +97,5 @@ ciclistas %>%
   xlab("") +
   theme_minimal(base_family = "Bahnschrift", base_size = 12) +
   theme(plot.title = element_text(face = "bold")) +
-  ggsave("plots/day4.png")
+  ggsave("plots/day4.png", width = 9)
 ```

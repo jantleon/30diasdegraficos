@@ -17,6 +17,8 @@ En este caso trataremos con fechas, que son un tipo de variable que puede dar al
 ```{r day2_loaddata, message=FALSE, warning=FALSE}
 library(tidyverse)
 
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+
 data <- read_csv2("data/day2.csv")
 
 data <- data %>% 

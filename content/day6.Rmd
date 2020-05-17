@@ -18,6 +18,9 @@ Primero descargaremos de Wikipedia los resultados del referéndum del Brexit cel
 ```{r day6_loaddata, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(rvest)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+
 url <- "https://en.wikipedia.org/wiki/2016_United_Kingdom_European_Union_membership_referendum"
 html <- read_html(url)
 
@@ -49,8 +52,6 @@ brexit$label <- paste0(brexit$option, "\n", brexit$perc, " %")
 Por último, visualizamos.
 
 ```{r day6_plot, fig.width=9, message=FALSE, warning=FALSE}
-
-windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
 
 brexit %>% 
   ggplot(aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3.1, fill=option)) +

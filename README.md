@@ -13,13 +13,13 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 </p>
 
 
-**D?a 2: Gráfico de l?neas con la evoluci?n de las llamadas al 016 y media m?vil**
+**D?a 2: Gráfico de líneas con la evolución de las llamadas al 016 y media móvil**
 
 <p align="center">
 <img src="content/plots/day2.png" alt="drawing" width="1000"/>
 </p>
 
-**D?a 3: Gráfico de dispersi?n de porcentaje de obesidad por renta per cápita con inner join de tres tablas de datos**
+**D?a 3: Gráfico de dispersión de porcentaje de obesidad por renta per cápita con inner join de tres tablas de datos**
 
 <p align="center">
 <img src="content/plots/day3.png" alt="drawing" width="800"/>
@@ -31,7 +31,7 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 <img src="content/plots/day4.png" alt="drawing" width="800"/>
 </p>
 
-**D?a 5: Diagrama de arco con las relaciones de vecindad de las ?reas sanitarias de Castilla-La Mancha**
+**D?a 5: Diagrama de arco con las relaciones de vecindad de las áreas sanitarias de Castilla-La Mancha**
 <p align="center">
 <img src="content/plots/day5.png" alt="drawing" width="800"/>
 </p>

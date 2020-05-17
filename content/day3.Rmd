@@ -18,6 +18,8 @@ Primero cargamos cada una de las tablas.
 ```{r day3_loaddata, message=FALSE, warning=FALSE}
 library(tidyverse)
 
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+
 obesity <- read_csv("https://raw.githubusercontent.com/owid/owid-datasets/master/datasets/Obesity%20Prevalence%20-%20WHO%20(2019)/Obesity%20Prevalence%20-%20WHO%20(2019).csv")
 gdp <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-05-21/per-capita-mismanaged-plastic-waste-vs-gdp-per-capita.csv")
 region <- read_csv("https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/all/all.csv")
