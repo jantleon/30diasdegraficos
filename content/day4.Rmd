@@ -80,10 +80,15 @@ library(lemon)
 ciclistas <- ciclistas %>% 
   group_by(team) %>% 
   mutate(avgage = round(mean(age),1))
+
+ciclistas$age <- as.numeric(ciclistas$age)
     
+ciclistas <- ciclistas %>% 
+  mutate(ciclistas = ciclistas)
+
 ciclistas %>% 
   filter(category == "WT") %>% 
-  ggplot(aes(as.numeric(age))) +
+  ggplot(aes(age)) +
   geom_histogram(stat = "count", fill = "firebrick") +
   scale_x_continuous(breaks = seq(from = 19, to = 40, by = 3)) +
   facet_rep_wrap(~team, repeat.tick.labels = TRUE) +
