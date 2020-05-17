@@ -38,5 +38,5 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 
 **Día 6: Gráfico de donut con resultado del referéndum de salida del Reino Unido de la Unión Europea (web scraping de tablas de Wikipedia)**
 <p align="center">
-<img src="content/plots/day6.png" alt="drawing" width="800"/>
+<img src="content/plots/day6.png" alt="drawing" width="500"/>
 </p>
