@@ -9,7 +9,7 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 **Día 1: Gráfico de barras con datos de la API REST del Ayuntamiento de Madrid**
 
 <p align="center">
-<img src="content/plots/day1.png" alt="drawing" width="600"/>
+<img src="content/plots/day1.png" alt="drawing" width="400"/>
 </p>
 
 
@@ -33,7 +33,7 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 
 **Día 5: Diagrama de arco con las relaciones de vecindad de las áreas sanitarias de Castilla-La Mancha**
 <p align="center">
-<img src="content/plots/day5.png" alt="drawing" width="800"/>
+<img src="content/plots/day5.png" alt="drawing" width="600"/>
 </p>
 
 **Día 6: Gráfico de donut con resultado del referéndum de salida del Reino Unido de la Unión Europea (web scraping de tablas de Wikipedia)**
