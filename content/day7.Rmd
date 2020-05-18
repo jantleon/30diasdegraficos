@@ -61,5 +61,5 @@ ggplot(data,aes(y=name,x=value))+
        caption="Fuente: CIS (febrero 2020) | @jantleon")+
   theme_void(base_family = "Bahnschrift") +
   theme(axis.text.x= element_text(), axis.text.y= element_text(), plot.title = element_text(face = "bold", size = 16)) +
-ggsave("joy1.png", height=8, width=8, dpi=120, type="cairo-png")
+ggsave("plots/day7.png", height=8, width=8, dpi=120, type="cairo-png")
 ```
