@@ -40,3 +40,8 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 <p align="center">
 <img src="content/plots/day6.png" alt="drawing" width="500"/>
 </p>
+
+**Día 7: Gráfico ridgeline con ubicación de los partidos políticos percibida por los ciudadanos.**
+<p align="center">
+<img src="content/plots/day7.png" alt="drawing" width="500"/>
+</p>
