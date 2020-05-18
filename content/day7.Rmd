@@ -1,0 +1,65 @@
+---
+title: "Día 7: Gráfico ridgeline con ubicación de los partidos políticos percibida por los ciudadanos"
+author: "José Antonio León Rosado"
+date: "18/5/2020"
+output: html_document
+---
+
+En esta ocasión pintaremos un gráfico ridgeline, que no es muy utilizado pero puede servir para mostrar distribuciones en variables cualitativas. Para el reto de hoy vamos a utilizar datos del barómetro del CIS de febrero sobre la ubicación de los partidos políticos según los ciudadanos. El CIS pregunta a sus entrevistados dónde ubicarían a cada partido político en una escala de 1 a 10, siendo 1 extrema izquierda y 10 extrema derecha. 
+
+Las librerías que cargaremos serán Tidyverse (como siempre), haven para abrir archivos .sav de SPSS (que es como el CIS comparte sus microdatos) y ggridges para hacer los gráficos ridgeline. También cargaremos la fuente Bahnschrift. Después cargaremos los microdatos del CIS y los empezaremos a transformar para adaptarlos a la visualización.
+
+```{r}
+library(tidyverse)
+library(haven)
+library(ggridges)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+
+data <- read_sav("data/3273.sav") %>% select(102:108)
+data <- zap_labels(data)
+```
+
+Pivotamos y renombramos cada variable con el nombre del partido por cuya ubicación ideológica se pregunta. También filtraremos los casos que no son perdidos.
+
+```{r}
+data <- pivot_longer(data, 1:7)
+data <- data %>%
+                mutate(name = case_when(name == 'ESCIDEOLPAR_1' ~ 'PSOE',
+                       name == 'ESCIDEOLPAR_2' ~ 'PP',
+                       name == 'ESCIDEOLPAR_3' ~ 'Vox',
+                       name == 'ESCIDEOLPAR_4' ~ 'Podemos',
+                       name == 'ESCIDEOLPAR_5' ~ 'IU',
+                       name == 'ESCIDEOLPAR_6' ~ 'Cs',
+                       name == 'ESCIDEOLPAR_7' ~ 'Más País',
+                       TRUE ~ as.character(name)))
+
+data <- data %>% filter(!value > 97)
+```
+
+Convertimos a factor la variable para poder hacer el gráfico.
+
+```{r}
+data$name <- as.factor(data$name)
+data$name <- factor(data$name, levels=c("Más País", "Cs", "IU", "Podemos", "Vox", "PP", "PSOE"))
+```
+
+Visualizamos con geom_ridgeline y otros parámetros estéticos y ya tenemos la ubicación ideológica percibida de los principales partidos de ámbito estatal.
+
+```{r}
+
+ggplot(data,aes(y=name,x=value))+
+  geom_ridgeline(stat="binline", binwidth=1, scale=3, aes(fill=name), alpha=0.7)+
+  scale_fill_manual(values=c("lightgreen", "#EB6109", "#B11823", "#5B3365", "#63BE21","#007FFF", "#FF0000")) +
+  scale_x_continuous(breaks=seq(1,10,1))+
+  scale_y_discrete(expand = expansion(mult = c(0.01, .2))) +
+  guides(fill=FALSE,color=FALSE)+
+  labs(title="Ubicación ideológica de los partidos políticos",
+       subtitle="Percibida por los ciudadanos en escala de 1 (izquierda) a 10 (derecha)",
+       y="",
+       x="Ubicación ideológica",
+       caption="Fuente: CIS (febrero 2020) | @jantleon")+
+  theme_void(base_family = "Bahnschrift") +
+  theme(axis.text.x= element_text(), axis.text.y= element_text(), plot.title = element_text(face = "bold", size = 16)) +
+ggsave("joy1.png", height=8, width=8, dpi=120, type="cairo-png")
+```
