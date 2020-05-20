@@ -41,7 +41,12 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 <img src="content/plots/day6.png" alt="drawing" width="500"/>
 </p>
 
-**Día 7: Gráfico ridgeline con ubicación de los partidos políticos percibida por los ciudadanos.**
+**Día 7: Gráfico ridgeline con ubicación de los partidos políticos percibida por los ciudadanos**
 <p align="center">
 <img src="content/plots/day7.png" alt="drawing" width="500"/>
+</p>
+
+**Día 8: Gráfico de densidad sobre porcentaje de población con obesidad por PIB per capita**
+<p align="center">
+<img src="content/plots/day8.png" alt="drawing" width="600"/>
 </p>
