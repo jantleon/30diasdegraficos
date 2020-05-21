@@ -1,0 +1,66 @@
+---
+title: "Día 9: Gráfico de áreas apiladas sobre mujeres en el parlamento en los países fundadores de la UE (1997-2019)"
+author: "José Antonio León Rosado"
+date: "21/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+En esta ocasión haremos un gráfico de áreas apiladas sobre composición de los parlamentos de los países fundadores de la Unión Europea. La fuente de los datos es la serie de mujeres en el parlamento del Banco Mundial.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lubridate)
+library(lemon)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+Cargamos y limpiamos los datos. 
+
+```{r load-clean-data, echo=FALSE}
+wip_raw <- read_csv("data/day9.csv", skip = 4)
+
+wip_clean <- wip_raw %>%
+             rename(country_name = `Country Name`) %>% 
+             filter(country_name %in% c("France", "Italy", "Germany", "Luxembourg", "Netherlands", "Belgium")) %>% 
+             select(1, 42:64) %>% 
+             pivot_longer(-country_name, names_to = "year", values_to = "women") %>% 
+             mutate(men = 100 - women) %>% 
+             pivot_longer(c(-country_name, -year), names_to = "gender", values_to = "perc") %>% 
+             mutate(date = ymd(year, truncated = 2L),
+                    country_name = case_when(country_name == "Belgium" ~ 'Bélgica',
+                                             country_name == "France" ~ 'Francia',
+                                             country_name == "Germany" ~ 'Alemania',
+                                             country_name == "Italy" ~ 'Italia',
+                                             country_name == "Luxembourg" ~ 'Luxemburgo',
+                                             country_name == "Netherlands" ~ 'Países Bajos'))
+```
+
+Creamos un dataframe con la anotación para remarcar hombres y mujeres y visualizamos el gráfico de áreas apiladas completo.
+
+```{r plot, fig.width=9}
+ann_text <- tribble(
+  ~date, ~country_name, ~series1, ~series2,
+  #--|--|--|----
+  as.Date("1997-3-1"), "Alemania", 5, 95
+)
+
+ggplot(wip_clean, aes(x = date)) +
+  geom_area(aes(y = perc, fill = gender)) +
+  facet_rep_wrap(~country_name, repeat.tick.labels = TRUE) +
+  geom_text(data = ann_text, aes(y = series1), label = "Mujeres", size = 2.5, hjust = 0, family = "Bahnschrift", color = "white") +
+  geom_text(data = ann_text, aes(y = series2), label = "Hombres", size = 2.5, hjust = 0, family = "Bahnschrift", color = "white") +
+  scale_y_continuous(limits = c(0,100), expand=c(0,0)) +
+  scale_x_date(date_breaks = "2 year", date_labels = "%Y", limits = as.Date(c("1997-1-1","2019-1-1")), expand=c(0,0)) +
+  scale_fill_manual(values = c("deepskyblue", "coral1")) +
+  labs(title = "Porcentaje de mujeres en el parlamento en los países fundadores de la UE (1997-2019)", caption = "Fuente: Banco Mundial | @jantleon", color = "") +
+  ylab("") +
+  xlab("") +
+  theme_minimal(base_family = "Bahnschrift", base_size = 12) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none", plot.margin=unit(c(1,1,1.5,1.2),"cm"), plot.title = element_text(face = "bold")) +
+  ggsave("hola.png", width = 10, height = 6, dpi = 300, type = "cairo")
+```
