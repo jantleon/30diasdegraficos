@@ -50,3 +50,8 @@ Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especia
 <p align="center">
 <img src="content/plots/day8.png" alt="drawing" width="600"/>
 </p>
+
+**Día 9: Gráfico de áreas apiladas sobre mujeres en el parlamento en los países fundadores de la UE (1997-2019)**
+<p align="center">
+<img src="content/plots/day9.png" alt="drawing" width="600"/>
+</p>
