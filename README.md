@@ -55,3 +55,8 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 <p align="center">
 <img src="content/plots/day9.png" alt="drawing" width="700"/>
 </p>
+
+**Día 10: Explorando paletas de colores adaptadas a discapacidad visual**
+<p align="center">
+<img src="content/plots/day9.png" alt="drawing" width="700"/>
+</p>
