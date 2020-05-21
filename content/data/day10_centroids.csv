@@ -1,0 +1,20 @@
+autonomous_region_id,autonomous_region_name,slug,longlab,latlab,autonomous_region_name_ca
+1,Andalucí­a,andalucia,-4.4277528,37.5442706,Andalucia
+2,Aragón,aragon,-0.9056623,41.5976275,AragÃ³
+3,Principado de Asturias,asturias,-5.8593267,43.3613953,Principat D'AstÃºries
+4,Baleares,baleares,3.23023,40.306513,Balears
+5,Canarias,canarias,-12.02913,36.49156,Canaries
+6,Cantabria,cantabria,-4.046017,43.253411,Cantabria
+7,Castilla y León,castilla-leon,-4.852191,41.6728728,Castilla i LleÃ³
+8,Castilla-La Mancha,castilla-la-mancha,-3.097702,39.2795607,Castilla-La Mancha
+9,Cataluña,catalunya,1.683653,41.830639,Catalunya
+10,Comunidad Valenciana,comunidad-valenciana,-0.738110,39.326382,Comunitat Valenciana
+11,Extremadura,extremadura,-6.168833,39.218899,Extremadura
+12,Galicia,galicia,-7.980307,42.8550554,GalÃ­cia
+13,Comunidad de Madrid,madrid,-3.6038322,40.4167515,Comunitat de Madrid
+14,Región de Murcia,murcia,-1.459863,37.982989,RegiÃ³ de MÃºrcia
+15,Comunidad Foral de Navarra,navarra,-1.70260691,42.6953909,Navarra
+16,País Vasco,pais-vasco,-2.574984,43.068269,Pais Vasc
+17,La Rioja,la-rioja,-2.539603,42.2870733,La Rioja
+18,Ceuta,ceuta,-4.702772,35.956942,Ceuta
+19,Melilla,melilla,-2.680101,35.640473,Melilla

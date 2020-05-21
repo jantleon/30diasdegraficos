@@ -1,0 +1,128 @@
+---
+title: "Día 10: Explorando paletas de colores adaptadas a discapacidad visual"
+author: "José Antonio León Rosado"
+date: "21/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+En esta ocasión se proponía explorar las paletas de colores, así que aprovechando que estoy haciendo un curso top de visualización con R voy a utilizar una de las lecciones extraidas del mismo. Se trata del paquete "viridis", que ofrece una serie de funciones orientadas a visualizar los colores de forma accesible para personas con discapacidades visuales. Además, he querido hacer un gráfico con datos relacionados con esta temática, por lo que he ido a la Encuesta de Discapacidad, Autonomía Personal y Situaciones de Dependencia de 2008. De aquí extraemos la tasa por mil de población con discapacidad virtual con el fin de conocer la prevalencia este fenómeno en cada comunidad autónoma española.
+
+Comenzaremos cargando las librerías necesarias. A "Tidyverse" se le suman la ya mencionada "viridis" y otras para hacer mapas en R.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(geojsonio)
+library(broom)
+library(mapproj)
+library(grid)
+library(viridis)
+
+#Load calibri font.
+windowsFonts(Calibri=windowsFont("Calibri"))
+update_geom_defaults("text", list(colour = "grey20", family = "Calibri"))
+
+#Colour palette used in the visualization.
+palette <- c("#a5d8db", "#d0df99", "#fff59b", "#fbcb8c")
+```
+
+Cargamos los datos y hacemos algunas transformaciones y uniones de tablas.
+
+```{r load-data, message=FALSE, warning=FALSE}
+#Read geojson (spanish autonomous communities with borders)
+spdf_ccaa <- geojson_read("https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/spain-communities.geojson", what = "sp")
+
+#Tidy geojson to data frame.
+spdf_fortified_ccaa <- tidy(spdf_ccaa, region = "cod_ccaa")
+
+#Read data to plot into maps.
+data_ccaa  <- read_delim("data/day10.csv", delim = ";")
+data_ccaa <- data_ccaa %>% mutate(vision = round(vision, 1))
+
+#Join tables (geojson + data + centroid).
+spdf_fortified_ccaa$id <- as.numeric(spdf_fortified_ccaa$id)
+data_ccaa$id <- as.numeric(data_ccaa$id)
+
+data_plot_ccaa <- spdf_fortified_ccaa %>%
+  left_join(data_ccaa, by = "id")
+
+#Centroid allow us to plot each data label in the center of the autonomous community.
+centroid_ccaa <- read_csv("data/day10_centroids.csv")
+
+data_plot_ccaa <- data_plot_ccaa %>% 
+  left_join(centroid_ccaa, by = c("ccaa" = "slug"))
+```
+
+Ahora acercaremos Canarias al resto de España, dado que queremos mantener un gráfico sin mucha dispersión pese a la lejanía geográfica de esta parte del territorio. Si no hiciésemos esta transformación estaríamos mostrando información innecesaria para nuestro propósito como la geografía africana. También haremos algunos cálculos para crear divisiones de los datos basadas en percentiles y que nos permitirán rellenar el gráfico con colores diferentes.
+
+```{r}
+#Mutate Canarias (by default is too far from the peninsula)
+data_plot_ccaa <- data_plot_ccaa %>%
+  mutate(lat_c = ifelse(lat <35, lat + 7.3, lat),
+         long_c = ifelse(long <(-13), long + 4, long))
+
+#Canaries line.
+canaries_line <- data.frame(long = c(-15, -8.5, -8.5),
+                            lat = c(37, 37, 35))
+
+#Get quantiles, minimum and maximum to divide data into discrete groups.
+quantiles <- unname(quantile(data_ccaa$vision, probs = c(.25,.5,.75), na.rm = TRUE))
+minVal <- min(data_ccaa$vision, na.rm = T)
+maxVal <- max(data_ccaa$vision, na.rm = T)
+brks_ccaa <- c(minVal, quantiles, maxVal)
+
+#Create group labels.
+labels <- c()
+
+for(i in 1:length(brks_ccaa)){
+  labels <- c(labels,round(brks_ccaa[i + 1], 2))
+}
+
+labels <- labels[1:length(labels)-1]
+
+data_plot_ccaa$brks_ccaa <- cut(data_plot_ccaa$vision, 
+                       breaks = brks_ccaa, 
+                       include.lowest = TRUE, 
+                       labels = labels)
+
+brks_scale <- levels(data_plot_ccaa$brks_ccaa)
+labels_scale <- rev(c(paste("Hasta", levels(data_plot_ccaa$brks_ccaa)[1]), paste("De", as.numeric(levels(data_plot_ccaa$brks_ccaa)[1])+1,"a", levels(data_plot_ccaa$brks_ccaa)[2]), paste("De", as.numeric(levels(data_plot_ccaa$brks_ccaa)[2])+1,"a", levels(data_plot_ccaa$brks_ccaa)[3]), paste("Más de", levels(data_plot_ccaa$brks_ccaa)[3])))
+```
+
+Por último visualizamos.
+
+```{r, fig.width=7.5, fig.height=5}
+ggplot(data_plot_ccaa)+
+  geom_polygon(aes(x=long_c, y = lat_c, group = group, fill=brks_ccaa), color = "black", size = 0.1) +
+  geom_path(data = canaries_line, aes(x=long, y = lat, group = NULL), color = "grey") +
+  geom_text(aes(x=longlab, y=latlab, label=.data$vision), size = 4, color = "black") +
+  scale_fill_manual(
+    values = plasma(4), 
+    breaks = brks_scale,
+    name = "",
+    drop = FALSE,
+    labels = rev(labels_scale))+
+  labs(title = "Tasa de población con discapacidad visual por comunidad autónoma",
+       subtitle = "Año 2008 | Tasa por 1000 habitantes de 6 y más años",
+       caption = "Encuesta sobre discapacidades, autonomía personal y situaciones de dependencia (INE) | @jantleon ") +
+  theme_minimal(base_family = "Calibri") +
+  theme(legend.position = c(0.9, 0.15),
+        axis.line = element_blank(),
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.text.align = 0,
+        plot.margin = unit(c(.5,.5,0,.5), "cm"),
+        panel.spacing = unit(c(2,0.2,.2,0.2), "cm"),
+        plot.title=element_text(size=15, hjust = 0.5),
+        plot.subtitle = element_text(size=12, hjust = 0.5),
+        legend.text=element_text(size=10)) +
+  ggsave("plots/day10.png")
+```
