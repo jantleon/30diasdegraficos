@@ -4,7 +4,7 @@ El calendario de #30diasdegraficos es el siguiente:
  
 ![](https://pbs.twimg.com/media/EXsJ0O_WkAASkHe?format=jpg&name=medium)
 
-Con este reto quiero poner en práctica mis habilidades con Tidyverse y, especialmente, con ggplot2, un must para para visualización de datos. ¡Allá vamos!
+Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente, con ggplot2, un must para para visualización de datos. ¡Allá vamos!
 
 **Día 1: Gráfico de barras con datos de la API REST del Ayuntamiento de Madrid**
 
