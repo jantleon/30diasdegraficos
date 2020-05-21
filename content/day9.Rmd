@@ -21,7 +21,7 @@ windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
 
 Cargamos y limpiamos los datos. 
 
-```{r load-clean-data, echo=FALSE}
+```{r load-clean-data, message=FALSE, warning=FALSE}
 wip_raw <- read_csv("data/day9.csv", skip = 4)
 
 wip_clean <- wip_raw %>%
@@ -62,5 +62,5 @@ ggplot(wip_clean, aes(x = date)) +
   xlab("") +
   theme_minimal(base_family = "Bahnschrift", base_size = 12) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none", plot.margin=unit(c(1,1,1.5,1.2),"cm"), plot.title = element_text(face = "bold")) +
-  ggsave("hola.png", width = 10, height = 6, dpi = 300, type = "cairo")
+  ggsave("plots/day9.png", width = 10, height = 6, dpi = 300, type = "cairo")
 ```
