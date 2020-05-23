@@ -60,3 +60,8 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 <p align="center">
 <img src="content/plots/day10.png" alt="drawing" width="700"/>
 </p>
+
+**Día 11: Mapa de calor del paro en España (2001-2020)**
+<p align="center">
+<img src="content/plots/day11.png" alt="drawing" width="700"/>
+</p>

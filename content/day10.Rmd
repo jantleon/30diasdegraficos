@@ -121,7 +121,7 @@ ggplot(data_plot_ccaa)+
         legend.text.align = 0,
         plot.margin = unit(c(.5,.5,0,.5), "cm"),
         panel.spacing = unit(c(2,0.2,.2,0.2), "cm"),
-        plot.title=element_text(size=15, hjust = 0.5),
+        plot.title=element_text(size=15, hjust = 0.5, face = "bold"),
         plot.subtitle = element_text(size=12, hjust = 0.5),
         legend.text=element_text(size=10)) +
   ggsave("plots/day10.png")

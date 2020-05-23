@@ -1,0 +1,52 @@
+---
+title: "Día 11: Mapa de calor del paro en España (2001-2020)"
+author: "José Antonio León Rosado"
+date: "22/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+El gráfico propuesto para hoy es un mapa de calor, muy utilizado para mostrar un gradiente que indica las zonas calientes y frías con mayor o menor incidencia de un fenómeno. Utilizaremos datos de la Encuesta de Población Activa del INE para ver la evolución de la tasa de paro desde 2001. Las zonas en naranja indican mayor incidencia del desempleo mientras que las azules menor incidencia. El gradiente de colores permite hacernos una idea de los valores intermedios, aunque si quisiéramos más exactitud habría que hacer un gráfico de barras. Estos mapas de calor son muy utilizados en análisis de datos aplicados al deporte, donde visualizan, por ejemplo, las zonas de actuación de un jugador o aquellas en las que el balón pasa más tiempo.
+
+Comenzaremos cargando las librerías tidyverse y viridis.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(viridis)
+
+windowsFonts("RobotoC" = windowsFont("RobotoC"))
+```
+
+También cargamos los datos en csv y convertimos las variables "year" y "trimester" a factor para facilitar el trabajo.
+
+```{r message=FALSE, warning=FALSE}
+data_raw <- read_csv2("data/day11.csv")
+
+data_clean <- data_raw %>% 
+                mutate(year = factor(year, ordered = TRUE),
+                       trimester = factor(trimester, ordered = TRUE))
+```
+
+Por último visualizamos con la geometría "geom_tile".
+
+```{r message=FALSE, warning=FALSE}
+data_clean %>% 
+  ggplot(aes(x = trimester, y = fct_rev(year), fill = tasa_paro)) +
+  geom_tile() +
+  scale_fill_viridis(option = "plasma") +
+  ylab("") +
+  xlab("") +
+  guides(fill = guide_colourbar(title.position = "top")) +
+  labs(title = "Tasa de paro por trimestre y año (2001-2020)", fill="Tasa de paro", caption = "Fuente: Encuesta de población activa (INE) | @jantleon") +
+  theme_minimal(base_family = "RobotoC") +
+  theme(legend.position = "bottom",
+        panel.grid.major=element_blank(),
+        plot.title=element_text(hjust = 0.5, face = "bold"),
+        legend.title.align=0.5) +
+  ggsave("hola.png") + theme(panel.background = element_rect(fill = NA), 
+    legend.direction = "horizontal") +labs(x = NULL, y = NULL)
+```
+
