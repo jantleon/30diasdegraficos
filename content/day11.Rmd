@@ -46,7 +46,7 @@ data_clean %>%
         panel.grid.major=element_blank(),
         plot.title=element_text(hjust = 0.5, face = "bold"),
         legend.title.align=0.5) +
-  ggsave("hola.png") + theme(panel.background = element_rect(fill = NA), 
+  ggsave("plots/day11.png") + theme(panel.background = element_rect(fill = NA), 
     legend.direction = "horizontal") +labs(x = NULL, y = NULL)
 ```
 
