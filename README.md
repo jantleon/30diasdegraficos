@@ -65,3 +65,8 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 <p align="center">
 <img src="content/plots/day11.png" alt="drawing" width="700"/>
 </p>
+
+**Día 12: Gráfico de paleta (lollipop) sobre pobreza infantil en la Unión Europea**
+<p align="center">
+<img src="content/plots/day12.png" alt="drawing" width="700"/>
+</p>

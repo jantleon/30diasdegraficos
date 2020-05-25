@@ -1,0 +1,60 @@
+---
+title: "Día 12: Gráfico de paleta (lollipop) sobre pobreza infantil en la Unión Europea"
+author: "José Antonio León Rosado"
+date: "23/5/2020"
+output: html_document
+---
+
+En esta ocasión haremos un gráfico de paleta o lollipop, que se suele utilizar como sustitivo del tradicional gráfico de barras. La ventaja respecto a este otro tipo de gráfico es que se prescinde de información innecesaria, ya que no se muestra el ancho de cada barra. El ancho de las barras introduce ruido en la interpretación del gráfico, aunque tiene la ventaja de que es más popular y se utiliza bastante. Esto ha hecho que los usuarios del gráfico ya estén bastante habituados a verlos y los suelan entender sin problemas.
+
+Como siempre, cargaremos Tidyverse y la fuente Bahnschrift.
+
+```{r}
+library(tidyverse)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+Limpiamos los datos.
+
+```{r}
+data_raw <- read_csv("data/day12.csv")
+
+data_clean <- data_raw %>% 
+                filter(UNIT == "Percentage" & SEX == "Total" & AGE == "Less than 16 years" & TIME == 2018) %>% 
+                select(GEO, Value) %>% 
+                slice(-1:-2, -4:-7, -35:-42) %>% 
+                mutate(Value = ifelse(Value == ":", NA, Value),
+                       Value = as.numeric(Value),
+                       GEO = case_when(GEO == "European Union - 28 countries (2013-2020)" ~ "European Union (2013-2020)",
+                                 GEO == "Germany (until 1990 former territory of the FRG)" ~ "Germany",
+                       TRUE ~ as.character(GEO)))
+```
+
+Y visualizamos el gráfico de paleta, que se compone de un geom_segment para hacer la línea y un geom_point para marcar el punto donde acaba ésta.
+
+```{r}
+data_clean %>%
+  arrange(Value) %>%
+  mutate(country=factor(GEO, levels=GEO)) %>%
+  filter(!is.na(Value)) %>% 
+  ggplot(aes(x=country, y=Value)) +
+    geom_segment(aes(xend=country, yend=0), color = "skyblue") +
+    geom_point( size=2, color="black") +
+    geom_text(aes(label = scales::percent(Value/100)), size = 3, hjust=-0.4, family = "Bahnschrift") +
+    scale_y_continuous(expand = c(0,0), limits = c(0,42), labels = label_percent(scale = 1)) +
+    guides(color = FALSE) +
+    coord_flip() +
+    xlab("") +
+    ylab("") + 
+    labs(title = "Población menor de 16 años en riesgo de pobreza o exclusión social en 2018", caption = "Fuente: Eurostat | @jantleon") +
+    theme_minimal(base_family = "Bahnschrift") +
+    theme(
+      panel.grid.major.x = element_blank(),
+      panel.border = element_blank(),
+      axis.ticks.x = element_blank(),
+      panel.grid = element_blank(),
+      plot.title = element_text(face = "bold")) +
+    ggsave("plots/day12.png", width = 9, height = 6)
+```
+
