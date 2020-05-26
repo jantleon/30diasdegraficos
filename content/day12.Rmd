@@ -57,4 +57,3 @@ data_clean %>%
       plot.title = element_text(face = "bold")) +
     ggsave("plots/day12.png", width = 9, height = 6)
 ```
-

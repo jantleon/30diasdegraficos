@@ -1,0 +1,50 @@
+---
+title: "Día 13: Visualizando datos temporales de la Covid en España"
+author: "José Antonio León Rosado"
+date: "24/5/2020"
+output: html_document
+---
+
+En el reto de hoy toca explorar la visualización de datos temporales. Ya he hecho algunas visualizaciones temporales en los días 2 (con geom_line, la geometría por excelencia para series temporales), 9 (con áreas apiladas) y 11 (con un mapa de calor). En esta ocasión mostraré la importancia de mantener las preguntas de cuestionario lo más comparables posible a lo largo del tiempo. En los barómetros de abril y mayo, el CIS ha introducido un cambio en la pregunta sobre percepción de la situación económica del país desde 1979. Aparte del cambio en el modo de administración de la encuesta, que pasó a hacerse de forma presencial a telefónica, la pregunta varió en dos aspectos. El primero es que se preguntaba por la situación económica al margen del covid, lo cual es absurdo teniendo en cuenta que en shocks anteriores no se había preguntado al margen de la crisis económica. El segundo es que se deja de sugerir la respuesta "regular" en la propia pregunta, influyendo sobre el número de personas que optan por esta respuesta no incluida entre las ofrecidas por el entrevistador.
+
+En esta ocasión cargaremos Tidyverse para el análisis de datos en general, lubridate para tratar con fechas y scales para tener más opciones de modificación de los ejes.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lubridate)
+library(scales)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+Pivotamos las tablas para adaptarlas a un formato interpretable por R de forma más sencilla y creamos una variable para remarcar el momento del cambio en la serie.
+
+```{r tidy-data, message=FALSE, warning=FALSE}
+data_raw <- read_csv2("data/day13.csv", col_types = cols(.default = "d", siteco = "c"))
+
+data_clean <- data_raw %>% 
+  pivot_longer(cols = `01/06/1979`:`01/05/2020`, names_to = "fecha", values_to = "valor") %>%
+  pivot_wider(names_from = siteco, values_from = valor) %>% 
+  mutate(buena = `Muy buena` + Buena,
+         fecha = dmy(fecha),
+         is_after_tezanos = ifelse(fecha > dmy("01/03/2020"), TRUE, FALSE))
+```
+
+Visualizamos el gráfico y remarcamos en rojo el cambio metodológico.
+
+```{r plot, message=FALSE, warning=FALSE, fig.width=12}
+ggplot(data_clean, aes(fecha, buena)) +
+  geom_line(color = "red") +
+  geom_line(aes(color = is_after_tezanos), show.legend = F) +
+  scale_x_date(date_breaks = "2 year", date_labels = "%Y", expand = c(0,200)) +
+  scale_y_continuous(n.breaks = 10, labels = percent_format(scale = 1, accuracy = 1)) +
+  scale_color_manual(values = c("darkgrey", "red")) +
+  ylab("") +
+  xlab("") +
+  labs(title = "Evolución del porcentaje de la población que cree que la situación económica es buena o muy buena (1979-2020)", caption = "Fuente: CIS | @jantleon", subtitle = "En los barómetros de abril y mayo de 2020 hay un cambio metodológico que rompe la serie temporal") +
+  annotate("text", x = dmy("01/01/2017"), y = 51, label = "Cambio metodológico", color = "red", face = "bold", family = "Bahnschrift") +
+  theme_minimal(base_family = "Bahnschrift") +
+  theme(plot.title = element_text(face = "bold", size = 16)) +
+  ggsave("plots/day13.png", width = 12)
+```
+
