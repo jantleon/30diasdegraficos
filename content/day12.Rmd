@@ -9,15 +9,16 @@ En esta ocasión haremos un gráfico de paleta o lollipop, que se suele utilizar
 
 Como siempre, cargaremos Tidyverse y la fuente Bahnschrift.
 
-```{r}
+```{r load-data, message=FALSE, warning=FALSE}
 library(tidyverse)
+library(scales)
 
 windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
 ```
 
 Limpiamos los datos.
 
-```{r}
+```{r tidy-data, message=FALSE, warning=FALSE}
 data_raw <- read_csv("data/day12.csv")
 
 data_clean <- data_raw %>% 
@@ -33,7 +34,7 @@ data_clean <- data_raw %>%
 
 Y visualizamos el gráfico de paleta, que se compone de un geom_segment para hacer la línea y un geom_point para marcar el punto donde acaba ésta.
 
-```{r}
+```{r plot, message=FALSE, warning=FALSE}
 data_clean %>%
   arrange(Value) %>%
   mutate(country=factor(GEO, levels=GEO)) %>%
