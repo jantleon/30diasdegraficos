@@ -1,0 +1,58 @@
+---
+title: "Día 14: Gráfico de rectángulos (treemap) con campeones de Champions League"
+author: "José Antonio León Rosado"
+date: "25/5/2020"
+output: html_document
+---
+
+Hoy haremos un treemap con los campeones de Copa de Europa y Champions League durante toda la historia de estas competiciones. Para ello reaprovecharemos una tabla que hay en Wikipedia a través de web scraping.
+
+Cargamos las librerías y fuentes necesarias. Treemapify permite hacer los gráficos de rectángulos o treemaps.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(rvest)
+library(treemapify)
+
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+Scrapeamos la tabla de Wikipedia y la convertimos en un data frame.
+
+```{r scrape-data,  message=FALSE, warning=FALSE}
+
+url <- "https://en.wikipedia.org/wiki/List_of_European_Cup_and_UEFA_Champions_League_finals"
+html <- read_html(url)
+
+data_raw <- html %>% 
+          html_nodes("table") %>% 
+          .[3] %>% 
+          html_table(fill = TRUE) %>% 
+          as.data.frame()
+```
+
+Limpiamos el dataset para adaptarlo al gráfico. En este caso seleccionamos solo la columna de equipos ganadores, le quitamos algunas filas sobrantes y calculamos cuántas veces ha ganado cada equipo.
+
+```{r tidy-data,  message=FALSE, warning=FALSE}
+data_clean <- data_raw %>% 
+          select(winner = 3) %>% 
+          slice(-c(1, 66:72)) %>% 
+          group_by(winner) %>% 
+          summarise(wins = n())
+```
+Por último visualizamos el gráfico.
+
+```{r fig.width=8, message=FALSE, warning=FALSE, fig.align='center'}
+data_clean %>% 
+ggplot(aes(area = wins, fill = wins, label = paste(winner, "\n", wins))) +
+  geom_treemap(layout = "srow", start = "topleft") +
+  geom_treemap_text(aes(size = wins), layout = "srow", colour = "white", family = "Bahnschrift", start = "topleft", size = 20) +
+  labs(title = "Ganadores de Copa de Europa y Champions League", caption = "Fuente: Wikipedia | @jantleon") +
+  theme_minimal(base_family = "Bahnschrift") +
+  scale_fill_gradient(low = "skyblue3", high = "royalblue4") +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, hjust = 0.5)) +
+  ggsave("plots/day14.png", width = 8)
+```
+
