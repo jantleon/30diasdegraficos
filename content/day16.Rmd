@@ -1,0 +1,51 @@
+---
+title: "Día 16: Gráfico de waffle con concejales por partido en Tomelloso (2019 - 2023)"
+author: "José Antonio León Rosado"
+date: "28/5/2020"
+output: html_document
+---
+
+Cargamos librerías. Como siempre, Tidyverse, y en esta ocasión waffle para hacer gráficos de ese tipo.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(waffle)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+Cargamos los datos de un csv y lo filtramos para el año 2019 y para aquellos partidos con más de 0 concejales.
+
+```{r load-data, message=FALSE, warning=FALSE}
+data_raw <- read_csv2("data/day16.csv")
+
+data_clean <- data_raw %>% filter(year == 2019 & seats > 0)
+```
+
+Para hacer el gráfico hay que crear un vector con el número de concejales por partido junto a los nombres de los partidos. También creamos un tibble (un dataframe de Tidyverse) con las posiciones y el texto que van a llevar las etiquetas que pasemos con la geometría geom_text.
+
+```{r tidy-data, message=FALSE, warning=FALSE}
+vector <- as.numeric(data_clean$seats)
+names(vector) <- data_clean$party_short
+
+x <- c(1, 7, 10, 11)
+y <- c(1, 1, 1, 1)
+labels <- tibble(data_clean$seats, x, y)
+labels <- labels %>% rename("label" = `data_clean$seats`)
+```
+
+Pintamos el gráfico y lo guardamos.
+
+```{r plot, message=FALSE, warning=FALSE, fig.align="center"}
+waffle(vector, rows=2, size=1, colors=data_clean$colour) +
+  geom_text(data = labels, mapping = aes(x = x, y = y, label = label), size = 6, colour = "WHITE", fontface = "bold") + 
+  scale_y_reverse() +
+  labs(title="Concejales por partido político en Tomelloso (2019-2023)",
+       caption="@jantleon") +
+  theme_minimal(base_family = "Bahnschrift") +
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank(), panel.grid = element_blank(), legend.position = "bottom", plot.title = element_text(face = "bold"))
+
+ggsave("plots/day16.png", width = 5)
+
+```
+

@@ -1,0 +1,80 @@
+---
+title: "Día 15: Dendograma de distritos de Madrid por número de monumentos"
+author: "José Antonio León Rosado"
+date: "26/5/2020"
+output: html_document
+---
+
+Para el día 15 haremos un dendograma que nos va a permitir hacer conglomerados (o clusters) de los distritos de Madrid en función de su número de monumentos. Vamos a reaprovechar los datos que ya utilizamos en el día 1 y que vienen de la REST API del portal de datos abiertos del Ayuntamiento de Madrid.
+
+Cargamos las librerías necesarias. Las dos primeras ya son conocidas y factoextra sirve para calcular los conglomerados y visualizarlos.
+
+```{r loadjson, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(jsonlite)
+library(factoextra)
+
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+Descargamos los datos.
+
+```{r loaddata, echo=FALSE}
+url_json <- "https://datos.madrid.es/portal/site/egob/menuitem.ac61933d6ee3c31cae77ae7784f1a5a0/?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=json&file=0&filename=300356-0-monumentos-ciudad-madrid&mgmtid=eb8e993ae322b610VgnVCM1000001d4a900aRCRD&preview=full"
+data <- fromJSON(url_json)
+
+data <- data[[2]][[6]]
+monumentos <- data.frame(distrito = data$district[1])
+monumentos <- monumentos %>% rename(distrito = 1)
+```
+
+Limpiamos.
+
+```{r tidydata}
+monumentos <- monumentos %>% separate(distrito, c(NA,'distrito'), sep="Distrito/")
+
+monumentos <- monumentos %>%
+                mutate(distrito = case_when(distrito == 'Vicalvaro' ~ 'Vicálvaro',
+                       distrito == 'Chamberi' ~ 'Chamberí',
+                       distrito == 'Chamartin' ~ 'Chamartín',
+                       distrito == 'PuenteDeVallecas' ~ 'Puente de Vallecas',
+                       distrito == 'CiudadLineal' ~ 'Ciudad Lineal',
+                       distrito == 'Fuencarral-ElPardo' ~ 'Fuencarral-El Pardo',
+                       distrito == 'SanBlas-Canillejas' ~ 'San Blas - Canillejas',
+                       distrito == 'VilladeVallecas' ~ 'Villa de Vallecas',
+                       distrito == 'SanBlas' ~ 'San Blas - Canillejas',
+                       distrito == 'Tetuan' ~ 'Tetuán',
+                       distrito == 'VillaDeVallecas' ~ 'Villa de Vallecas',
+                       TRUE ~ as.character(distrito)))
+```
+
+Adaptamos el dataset para poder pasarlo a la función hcut, que es la que calcula los clusters.
+
+```{r}
+monumentos <- monumentos %>%  filter(!is.na(distrito) & distrito != "Distrito") %>%
+                group_by(distrito) %>% 
+                summarize(Count=n()) %>% 
+                column_to_rownames(var = "distrito") %>% 
+                as.data.frame()
+```
+
+Calculamos el cluster con hcut y visualizamos con fviz_dend.
+
+```{r plot, fig.align="center", fig.width=7, message=FALSE, warning=FALSE}
+d_hc <- hcut(monumentos, k = 4, stand = T)
+
+fviz_dend(d_hc, 
+          k = 4, 
+          cex = 0.5, 
+          horiz = TRUE, 
+          k_colors = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07"), 
+          color_labels_by_k = TRUE,
+          main = "Dendograma de monumentos por distrito en Madrid \nFuente: Ayuntamiento de Madrid | @jantleon", 
+          xlab = "",
+          ylab = "",
+          ggtheme = theme(plot.title = element_text(family = "Bahnschrift"), axis.ticks.x = element_blank(), panel.background = element_blank()))
+
+ggsave("plots/day15.png", width = 7)
+
+```

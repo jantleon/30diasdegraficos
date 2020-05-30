@@ -79,5 +79,10 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 
 **Día 14: Gráfico de rectángulos (treemap) con campeones de Champions League**
 <p align="center">
-<img src="content/plots/day14.png" alt="drawing" width="700"/>
+<img src="content/plots/day14.png" alt="drawing" width="500"/>
+</p>
+
+**Día 15: Gráfico de rectángulos (treemap) con campeones de Champions League**
+<p align="center">
+<img src="content/plots/day14.png" alt="drawing" width="500"/>
 </p>
