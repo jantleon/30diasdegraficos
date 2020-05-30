@@ -76,13 +76,17 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 <img src="content/plots/day13.png" alt="drawing" width="700"/>
 </p>
 
-
 **Día 14: Gráfico de rectángulos (treemap) con campeones de Champions League**
 <p align="center">
 <img src="content/plots/day14.png" alt="drawing" width="500"/>
 </p>
 
-**Día 15: Gráfico de rectángulos (treemap) con campeones de Champions League**
+**Día 15: Dendograma de distritos de Madrid por número de monumentos**
 <p align="center">
-<img src="content/plots/day14.png" alt="drawing" width="500"/>
+<img src="content/plots/day15.png" alt="drawing" width="500"/>
+</p>
+
+**Día 16: Gráfico de waffle con concejales por partido en Tomelloso (2019 - 2023)**
+<p align="center">
+<img src="content/plots/day16.png" alt="drawing" width="500"/>
 </p>
