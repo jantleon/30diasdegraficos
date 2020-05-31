@@ -1,7 +1,50 @@
 ---
-title: "Día 17: Diagrama de Sankey "
+title: "Día 17: Diagrama de Sankey sobre movilidad educativa entre padres e hijos/as"
 author: "José Antonio León Rosado"
 date: "28/5/2020"
 output: html_document
 ---
+
+Hoy haremos un diagrama de Sankey, que permite visualizar flujos de transmisión entre dos variables. En este caso mostraremos la relación entre el nivel educativo de los padres y el de los hijos, con datos de la Encuesta de Condiciones de Vida, que en 2011 hizo un módulo especial sobre transmisión intergeneracional de la pobreza.
+
+Cargamos Tidyverse y ggalluvial, que es un paquete que facilita realizar diagramas de Sankey.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggalluvial)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+Cargamos los datos que he sacado de una tabla de INE Base y pivotamos para adaptar al dataset que se requiere para el diagrama de Sankey, compuesto por una variable principal de origen y una secundaria de destino.
+
+```{r load-tidy-data, message=FALSE, warning=FALSE}
+data_raw <- read_csv("data/day17.csv")
+
+data_clean <- data_raw %>% 
+                pivot_longer(-hijo, names_to = "padre", values_to = "percent") %>% 
+                mutate(padre = factor(padre, levels =  unique(padre), ordered = T),
+                       hijo = factor(hijo, levels = c("Educación primaria o inferior", "Educación secundaria primera etapa", "Educación secundaria segunda etapa", "Educación superior"), ordered = T))
+
+```
+
+Visualizamos con ggplot y geom_alluvium para mostrar el flujo, geom_stratum para las cajas con las categorías y geom_text para las etiquetas que hay dentro de las cajas.
+
+```{r plot, message=FALSE, warning=FALSE, fig.width=17, fig.height=9.26}
+ggplot(data_clean,
+       aes(axis1 = padre, axis2 = hijo, y = percent)) +
+  scale_x_discrete(limits = c("Nivel educativo del padre", "Nivel educativo del hijo/a"),
+                   expand = c(0.2, 0.2)) +
+  ylab("") +
+  labs(title ="Movilidad educativa intergeneracional (2011)", subtitle = "Adultos entre 25 y 59 años según nivel de formación del padre cuando eran adolescentes y nivel de formación alcanzado", caption ="Fuente: Encuesta de Condiciones de Vida (INE) | @jantleon") +
+  geom_alluvium(col = "black", aes(fill = padre), show.legend = FALSE) +
+  geom_stratum() +
+  geom_text(stat = "stratum", infer.label = TRUE, cex = 3) +
+  theme_minimal(base_family = "Bahnschrift", base_size = 16) +
+  theme(plot.title = element_text(hjust = .5, face = "bold"),
+        plot.subtitle = element_text(hjust = .5),
+        axis.text = element_blank())
+
+ggsave("plots/day17.png", width = 17)
+```
 
