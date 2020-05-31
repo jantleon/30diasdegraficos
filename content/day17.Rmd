@@ -43,7 +43,8 @@ ggplot(data_clean,
   theme_minimal(base_family = "Bahnschrift", base_size = 16) +
   theme(plot.title = element_text(hjust = .5, face = "bold"),
         plot.subtitle = element_text(hjust = .5),
-        axis.text = element_blank())
+        axis.text = element_blank(),
+        panel.grid = element_blank())
 
 ggsave("plots/day17.png", width = 17)
 ```

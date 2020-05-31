@@ -93,5 +93,5 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 
 **Día 17: Diagrama de Sankey sobre movilidad educativa entre padres e hijos/as**
 <p align="center">
-<img src="content/plots/day17.png" alt="drawing" width="700"/>
+<img src="content/plots/day17.png" alt="drawing" width="900"/>
 </p>
