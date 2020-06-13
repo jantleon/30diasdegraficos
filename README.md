@@ -98,10 +98,10 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 
 **Día 18: Ubicación geográfica de centros de mayores en Castilla-La Mancha (2019)**
 <p align="center">
-<img src="content/plots/day18.png" alt="drawing" width="1000"/>
+<img src="content/plots/day18.png" alt="drawing" width="700"/>
 </p>
 
 **Día 19: Stream graph de accidentes de tráfico en Madrid por tipo de vehículo en 2019**
 <p align="center">
-<img src="content/plots/day19.png" alt="drawing" width="1000"/>
+<img src="content/plots/day19.png" alt="drawing" width="700"/>
 </p>
