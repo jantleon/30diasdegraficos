@@ -9,26 +9,26 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 **Día 1: Gráfico de barras con datos de la API REST del Ayuntamiento de Madrid**
 
 <p align="center">
-<img src="content/plots/day1.png" alt="drawing" width="400"/>
+<img src="content/plots/day1.png" alt="drawing" width="500"/>
 </p>
 
 
 **Día 2: Gráfico de líneas con la evolución de las llamadas al 016 y media móvil**
 
 <p align="center">
-<img src="content/plots/day2.png" alt="drawing" width="1000"/>
+<img src="content/plots/day2.png" alt="drawing" width="800"/>
 </p>
 
 **Día 3: Gráfico de dispersión de porcentaje de obesidad por renta per cápita con inner join de tres tablas de datos**
 
 <p align="center">
-<img src="content/plots/day3.png" alt="drawing" width="600"/>
+<img src="content/plots/day3.png" alt="drawing" width="500"/>
 </p>
 
 **Día 4: Distribución de edad por equipo World Tour en la temporada 2020 (con facets y web scraping)**
 
 <p align="center">
-<img src="content/plots/day4.png" alt="drawing" width="800"/>
+<img src="content/plots/day4.png" alt="drawing" width="900"/>
 </p>
 
 **Día 5: Diagrama de arco con las relaciones de vecindad de las áreas sanitarias de Castilla-La Mancha**
@@ -48,7 +48,7 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 
 **Día 8: Gráfico de densidad sobre porcentaje de población con obesidad por PIB per capita**
 <p align="center">
-<img src="content/plots/day8.png" alt="drawing" width="600"/>
+<img src="content/plots/day8.png" alt="drawing" width="500"/>
 </p>
 
 **Día 9: Gráfico de áreas apiladas sobre mujeres en el parlamento en los países fundadores de la UE (1997-2019)**
@@ -58,17 +58,17 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 
 **Día 10: Explorando paletas de colores adaptadas a discapacidad visual**
 <p align="center">
-<img src="content/plots/day10.png" alt="drawing" width="700"/>
+<img src="content/plots/day10.png" alt="drawing" width="500"/>
 </p>
 
 **Día 11: Mapa de calor del paro en España (2001-2020)**
 <p align="center">
-<img src="content/plots/day11.png" alt="drawing" width="700"/>
+<img src="content/plots/day11.png" alt="drawing" width="500"/>
 </p>
 
 **Día 12: Gráfico de paleta (lollipop) sobre pobreza infantil en la Unión Europea**
 <p align="center">
-<img src="content/plots/day12.png" alt="drawing" width="700"/>
+<img src="content/plots/day12.png" alt="drawing" width="600"/>
 </p>
 
 **Día 13: Visualizando datos temporales con la serie del CIS sobre situación económica**
@@ -83,15 +83,15 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 
 **Día 15: Dendograma de distritos de Madrid por número de monumentos**
 <p align="center">
-<img src="content/plots/day15.png" alt="drawing" width="500"/>
+<img src="content/plots/day15.png" alt="drawing" width="600"/>
 </p>
 
 **Día 16: Gráfico de waffle con concejales por partido en Tomelloso (2019 - 2023)**
 <p align="center">
-<img src="content/plots/day16.png" alt="drawing" width="500"/>
+<img src="content/plots/day16.png" alt="drawing" width="400"/>
 </p>
 
 **Día 17: Diagrama de Sankey sobre movilidad educativa entre padres e hijos/as**
 <p align="center">
-<img src="content/plots/day17.png" alt="drawing" width="900"/>
+<img src="content/plots/day17.png" alt="drawing" width="1000"/>
 </p>
