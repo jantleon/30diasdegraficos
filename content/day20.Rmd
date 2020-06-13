@@ -11,4 +11,4 @@ El proceso comenzaba descargando los tweets generados en los hashtags de esos pr
 
 El resultado final es este:
 
-![](https://pbs.twimg.com/media/EXsJ0O_WkAASkHe?format=jpg&name=medium)
+![](https://raw.githubusercontent.com/jantleon/30diasdegraficos/master/content/plots/day20.png)
