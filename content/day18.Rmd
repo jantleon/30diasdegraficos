@@ -1,0 +1,40 @@
+---
+title: "Día 18: Ubicación geográfica de centros de mayores en Castilla-La Mancha"
+author: "José Antonio León Rosado"
+date: "29/05/2020"
+output: html_document
+---
+
+Hoy vamos a trabajar con datos del Portal de Datos Abiertos de la Junta de Comunidades de Castilla-La Mancha. Los datasets están conectados a la API de este Portal, por lo que todo lo que actualicen desde la Junta se actualizará también en este script. Además de trabajar con APIs, en este script va a servir para mostrar cómo trabajar con el paquete sf, muy valioso para trabajar con datos espaciales.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(sf)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+Leemos dos datasets con la función read_sf. data_res contiene datos de los centros de mayores de la comunidad autónoma, mientras que geo es el shapefile que contiene los límites geogáficos de Castilla-La Mancha y sus provincias.
+
+```{r load-data, message=FALSE, warning=FALSE}
+data_res <- read_sf("https://opendata.arcgis.com/datasets/a0053a28d71d4f7c98a16a7e970da0b9_0.geojson")
+
+geo <- read_sf("https://opendata.arcgis.com/datasets/ecc1df286bfe4ee09a6a97188c1b86db_0.geojson")
+```
+
+Visualizamos con ggplot y la geometría geom_sf. Como se puede observar, gracias a la librería sf el proceso es mucho más sencillo que con geom_map.
+
+```{r plot, message=FALSE, warning=FALSE}
+ggplot() +
+  geom_sf(data = geo, fill = "white") +
+  geom_sf(data = st_jitter(data_res, .1), aes(color = TIPO_CENTR), alpha = 0.8, size = .9) +
+  labs(title = "Centros y Residencias de Mayores de Castilla-La Mancha (2019)", caption = "Fuente: Datos Geográficos Abiertos de Castilla-La Mancha | @jantleon") +
+  scale_color_manual(labels = c("Centro de día", "Residencia", "Vivienda"), values = c("#4682B4","#B4464B", "#B4AF46")) +
+  theme_void(base_family = "Bahnschrift", base_size = 10) +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5),
+        legend.title = element_blank(),
+        legend.position = "bottom")
+
+ggsave("plots/day18.png")
+```
+

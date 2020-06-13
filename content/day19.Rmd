@@ -1,0 +1,60 @@
+---
+title: "Día 19: Accidentes de tráfico en Madrid por tipo de vehículo en 2019 (stream graph)"
+author: "José Antonio León Rosado"
+date: "30/05/2020"
+output: html_document
+---
+
+Hoy haremos un gráfico de stream, que es una variante del gráfico de áreas apiladas y del que se diferencia en que los valores se distribuyen en torno a un eje horizontal central. Este gráfico permite ver tanto la variación temporal de una variable como su composición interna. En este caso visualizaremos los accidentes de tráfico en la ciudad de Madrid y la distribución de éstos por tipo de vehículo.
+
+Cargaremos unas cuantas librerías, algunas ya conocidas y otras nuevas como streamgraph y ggTimeSeries (para hacer este tipo de gráfico) y RColorBrewer (para tener más paletas de colores aparte de las que tiene R por defecto).
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(rvest)
+library(lubridate)
+library(streamgraph)
+library(RColorBrewer)
+library(ggTimeSeries)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+Sys.setlocale("LC_ALL", "English")
+```
+
+Leemos los datos descargados del portal de datos abiertos del Ayuntamiento de Madrid y los limpiamos y preparamos para la visualización.
+
+```{r load-clean-data, message=FALSE, warning=FALSE}
+data_raw <- read_csv2("data/day19.csv", locale= locale(encoding = "latin1"))
+
+data_clean <- data_raw %>% 
+                select(2, 9) %>% 
+                rename(VEHICULO = 2) %>% 
+                mutate(FECHA = dmy(FECHA),
+                       MES = floor_date(FECHA, unit = "month"),
+                       VEHICULO = case_when(VEHICULO %in% c("Motocicleta > 125cc", "Motocicleta hasta 125cc") ~ "Motocicleta",
+                        TRUE ~ as.character(VEHICULO))) %>% 
+                group_by(MES, VEHICULO) %>% 
+                summarise(count = n()) %>% 
+                filter(VEHICULO %in% c("Autobús", "Bicicleta", "Camión rígido", "Ciclomotor", "Furgoneta", "Motocicleta", "Turismo"))
+```
+
+Pintamos el gráfico con ggplot y la estadística streamgraph.
+
+```{r plot, message=FALSE, warning=FALSE, fig.align="center"}
+ggplot(data_clean, aes(x = ymd(MES), y = count, fill = VEHICULO)) +
+  stat_steamgraph() +
+  labs(title = "Accidentes de tráfico en Madrid por tipo de vehículo (2019)", caption = "Fuente: Portal de Datos Abiertos del Ayuntamiento de Madrid | @jantleon") +
+  ylab(NULL) +
+  xlab(NULL) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%B", expand = c(0,10)) +
+  scale_fill_brewer(palette = "Paired") +
+  guides(fill = guide_legend(nrow = 1)) +
+  theme_minimal(base_size = 10, base_family = "Bahnschrift") +
+  theme(axis.text.y = element_blank(),
+        legend.position = "top",
+        plot.title = element_text(face = "bold", hjust = .5),
+        legend.title = element_blank())
+
+ggsave("plots/day19.png", width = 10)
+```
+
