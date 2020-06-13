@@ -1,0 +1,14 @@
+---
+title: "Día 20: Grafo de la aparición de Albert Rivera en El Hormiguero (marzo de 2019)"
+author: "José Antonio León Rosado"
+date: "31/05/2020"
+output: html_document
+---
+
+En este caso vamos a reutilizar un grafo que realicé para mi trabajo de fin de máster. Para este trabajo descargué datos de Twitter sobre las apariciones televisivas de los principales candidatos de la oposición en El Hormiguero y El Objetivo, dos formatos influidos por el *politainment*.
+
+El proceso comenzaba descargando los tweets generados en los hashtags de esos programas. Después se hacían en R una serie de transformaciones con el objetivo de tener un dataset exportable a Gephi, que es el programa donde se visualizaban finalmente las redes. El script utilizado está disponible en [este enlace](https://github.com/jantleon/rtogephi) y el trabajo completo (junto a la metodología) se encuentra en [este otro](https://github.com/jantleon/trabajos_academicos/blob/master/tfm-metodologia-investigacion/Politainment%20y%20Big%20Data%20-%20Las%20audiencias%20en%20Twitter%20de%20El%20Hormiguero%20y%20El%20Objetivo%20en%20las%20elecciones%20generales%20de%202019.pdf).
+
+El resultado final es este:
+
+![](https://pbs.twimg.com/media/EXsJ0O_WkAASkHe?format=jpg&name=medium)

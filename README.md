@@ -105,3 +105,8 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 <p align="center">
 <img src="content/plots/day19.png" alt="drawing" width="700"/>
 </p>
+
+**Día 20: Grafo de la aparición de Albert Rivera en El Hormiguero (marzo de 2019)**
+<p align="center">
+<img src="content/plots/day20.png" alt="drawing" width="700"/>
+</p>
