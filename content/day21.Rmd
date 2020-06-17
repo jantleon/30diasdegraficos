@@ -1,0 +1,47 @@
+---
+title: "Día 21: Gráficos con anotaciones"
+author: "José Antonio León Rosado"
+date: "1/06/2020"
+output: html_document
+---
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lubridate)
+library(scales)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+
+```{r tidy-data, message=FALSE, warning=FALSE}
+data_raw <- read_csv("data/day21.csv")
+
+data_clean <- data_raw %>% 
+                pivot_longer(-religiosidad, names_to = "fecha", values_to = "valor") %>% 
+                mutate(fecha = ymd(parse_datetime(fecha, format = "%b-%y")))
+```
+
+```{r plot, fig.align="center", message=FALSE, warning=FALSE}
+data_clean %>% 
+  ggplot(aes(x = fecha, y = valor, group = religiosidad, color = religiosidad)) +
+    geom_line(show.legend = F, size = 1.1) +
+    ylab("") +
+    xlab("") +
+    labs(title = "Religiosidad de la población española (1998-2019)", caption = "Fuente: CIS | @jantleon") +
+    scale_x_date(date_breaks = "1 year", date_labels = "%Y", expand = c(0,200)) +
+    scale_y_continuous(n.breaks = 10, labels = percent_format(scale = 1, accuracy = 1)) +
+    annotate(geom = "curve", x = dmy("01/01/2017"), y = 77, xend = dmy("01/09/2017"), yend = 73, curvature = -.4, arrow = arrow(length = unit(2, "mm")), color = "#7dad00") +
+    annotate(geom = "text", x = dmy("01/09/2015"), y = 78, label = "Católico", hjust = "left", family = "Bahnschrift", color = "#7dad00") +
+    annotate(geom = "curve", x = dmy("01/01/2001"), y = 16, xend = dmy("01/06/2001"), yend = 12, curvature = -.4, arrow = arrow(length = unit(2, "mm")), color = "#c67cff") +
+    annotate(geom = "text", x = dmy("01/01/1999"), y = 17, label = "No creyente", hjust = "left", family = "Bahnschrift", color = "#c67cff") +
+    annotate(geom = "curve", x = dmy("01/03/2007"), y = 9, xend = dmy("01/07/2007"), yend = 8, curvature = -.4, arrow = arrow(length = unit(2, "mm")), color = "#f8766d") +
+    annotate(geom = "text", x = dmy("01/06/2006"), y = 10, label = "Ateo", hjust = "left", family = "Bahnschrift", color = "#f8766d") +
+      annotate(geom = "curve", x = dmy("01/05/2016"), y = 5, xend = dmy("01/09/2016"), yend = 4, curvature = -.4, arrow = arrow(length = unit(2, "mm")), color = "#00bdc4") +
+    annotate(geom = "text", x = dmy("01/06/2015"), y = 6, label = "Otras", hjust = "left", family = "Bahnschrift", color = "#00bdc4") +
+    theme_minimal(base_family = "Bahnschrift") +
+    theme(plot.title = element_text(face = "bold", size = 16, hjust = 0.5))
+
+ggsave("plots/day21.png", width = 10)
+```
+
