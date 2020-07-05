@@ -126,7 +126,7 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 <img src="content/plots/day23.png" alt="drawing" width="700"/>
 </p>
 
-**Día 24: Mapa de coropletas sobre población en riesgo de pobreza y/o exclusión social**
+**Día 24: Mapa de coropletas sobre población en riesgo de pobreza y/o exclusión social en la Unión Europea**
 <p align="center">
 <img src="content/plots/day24.png" alt="drawing" width="700"/>
 </p>
@@ -143,7 +143,7 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 
 **Día 27: Gráfico animado de la valoración de José Luis Rodríguez Zapatero**
 <p align="center">
-<img src="content/plots/day27.png" alt="drawing" width="700"/>
+<img src="content/plots/day27.gif" alt="drawing" width="700"/>
 </p>
 
 **Día 28: Movilidad educativa entre padres e hijos en diagramas de cuerdas**
