@@ -1,5 +1,5 @@
 ---
-title: "Día 21: Gráficos con anotaciones"
+title: "Día 21: Gráficos de religiosidad en España con anotaciones"
 author: "José Antonio León Rosado"
 date: "1/06/2020"
 output: html_document

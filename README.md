@@ -110,3 +110,48 @@ Con este reto quiero desarrollar mis habilidades con Tidyverse y, especialmente,
 <p align="center">
 <img src="content/plots/day20.png" alt="drawing" width="700"/>
 </p>
+
+**Día 21: Gráficos de religiosidad en España con anotaciones**
+<p align="center">
+<img src="content/plots/day21.png" alt="drawing" width="700"/>
+</p>
+
+**Día 22: Visualizando datos textuales de un artículo de prensa**
+<p align="center">
+<img src="content/plots/day22.png" alt="drawing" width="700"/>
+</p>
+
+**Día 23: Gráficos de proyección solar sobre información política en televisión**
+<p align="center">
+<img src="content/plots/day23.png" alt="drawing" width="700"/>
+</p>
+
+**Día 24: Mapa de coropletas sobre población en riesgo de pobreza y/o exclusión social**
+<p align="center">
+<img src="content/plots/day24.png" alt="drawing" width="700"/>
+</p>
+
+**Día 25: Gráficos de violín sobre valoración de los jugadores de la Liga Santander en Fifa 20**
+<p align="center">
+<img src="content/plots/day25.png" alt="drawing" width="700"/>
+</p>
+
+**Día 26: Población que podría seguir sobrellevando el confinamiento con diagrama de Marimekko**
+<p align="center">
+<img src="content/plots/day26.png" alt="drawing" width="700"/>
+</p>
+
+**Día 27: Gráfico animado de la valoración de José Luis Rodríguez Zapatero**
+<p align="center">
+<img src="content/plots/day27.png" alt="drawing" width="700"/>
+</p>
+
+**Día 28: Movilidad educativa entre padres e hijos en diagramas de cuerdas**
+<p align="center">
+<img src="content/plots/day28.png" alt="drawing" width="700"/>
+</p>
+
+**Día 29: Gráfico de coordenadas paralelas con títulos de Real Madrid y Barcelona**
+<p align="center">
+<img src="content/plots/day29.png" alt="drawing" width="700"/>
+</p>

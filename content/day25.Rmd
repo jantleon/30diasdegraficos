@@ -1,0 +1,48 @@
+---
+title: "Día 25: Gráficos de violín sobre valoración de los jugadores de la Liga Santander en Fifa 20"
+output: html_document
+---
+
+Hoy vamos a aprovechar un dataset de Kaggle para visualizar la distribución de la valoración de los jugadores de la Liga Santander en Fifa 20. Además vamos a utilizar el paquete ```mdthemes``` que ha salido recientemente y que permite escribir en formato Markdown en los títulos de gráficos en ```ggplot2```.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(mdthemes)
+```
+
+Cargamos los datos crudos.
+
+```{r load-data, message=FALSE, warning=FALSE}
+data_raw <- read_csv("data/day25.csv")
+```
+
+Limpiamos esos datos.
+
+```{r clean-data, message=FALSE, warning=FALSE}
+data_clean <- data_raw %>% 
+                filter(club %in% c("FC Barcelona", "Atlético Madrid", "Sevilla FC", "Real Madrid", "Getafe CF", "Villarreal CF", "Real Sociedad", "Valencia CF", "Athletic Club de Bilbao", "Granada CF", "CA Osasuna", "Levante UD", "Real Betis", "Real Valladolid CF", "SD Eibar", "Deportivo Alavés", "RC Celta", "RCD Mallorca", "CD Leganés", "RCD Espanyol")) %>% 
+  mutate(club = fct_rev(factor(club, levels = c("Real Madrid", "FC Barcelona", "Atlético Madrid", "Sevilla FC",  "Getafe CF", "Villarreal CF", "Real Sociedad", "Valencia CF", "Athletic Club de Bilbao", "Granada CF", "CA Osasuna", "Levante UD", "Real Betis", "Real Valladolid CF", "SD Eibar", "Deportivo Alavés", "RC Celta", "RCD Mallorca", "CD Leganés", "RCD Espanyol")))) %>% 
+  select(3, 10, 11) %>% 
+  mutate(color = recode_factor(club, "FC Barcelona" = "Champions League", "Atlético Madrid" = "Champions League", "Sevilla FC" = "Champions League", "Real Madrid" = "Champions League", "Getafe CF" = "Europa League", "Villarreal CF" = "Europa League", "Real Sociedad" = "Europa League", "RCD Mallorca" = "Descenso", "CD Leganés" = "Descenso", "RCD Espanyol" = "Descenso", .default = "Permanencia"))
+```
+
+Visualizamos.
+
+```{r plot, message=FALSE, warning=FALSE}
+data_clean %>% 
+  ggplot() +
+   geom_violin(aes(overall, club, fill = color)) +
+  labs(x = NULL, y = NULL) +
+  scale_x_continuous(breaks = seq(50, 100, 5)) +
+  scale_fill_manual(values = c("darkolivegreen3", "chocolate1", "brown2","lightyellow")) +
+  ggtitle(paste0(
+    "**Valoración media en Fifa 20 de los jugadores de la", 
+    "<span style = 'color:#FF0000'> Liga Santander </span>", 
+    "(2019-2020)**")) +
+  labs(caption = "Fuente: Kaggle | @jantleon") +
+  md_theme_minimal(base_family = "Bahnschrift", base_size = 10) +
+  theme(legend.position = "none")
+
+ggsave("plots/day25.png", height = 8, width = 9)
+```
+

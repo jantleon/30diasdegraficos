@@ -1,0 +1,48 @@
+---
+title: "Día 2: Gráfico de líneas con la evolución de las llamadas al 016 y media móvil"
+author: "José Antonio León Rosado"
+date: "13/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Empezaremos cargando los datos, que en este caso son un .csv adaptado de una tabla del [Portal Estadístico de Violencia de Género](http://estadisticasviolenciagenero.igualdad.mpr.gob.es/) del Ministerio de Igualdad. Visualizaremos la evolución temporal de las llamadas al 016, que es un teléfono un servicio telefónico de información y de asesoramiento jurídico en materia de violencia de género que existe en España desde 2007. 
+
+En este caso trataremos con fechas, que son un tipo de variable que puede dar algunos problemas. En este fragmento de código parseamos la fecha para que R pueda trabajar con ella y sepa que se trata de una variable de este tipo.
+
+```{r day2_loaddata, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+
+data <- read_csv2("data/day2.csv")
+
+data <- data %>% 
+  mutate(X2 = parse_datetime(X2, format = "%d%.%m%.%Y")) %>% 
+  rename(Fecha = X2, Llamadas = "Número de llamadas pertinentes")
+```
+
+Como queremos visualizar la evolución de las llamadas al 016 a lo largo del tiempo tendremos que usar un gráfico de línea. Además, para poder detectar tendencias se pintará una media móvil de 6 meses que facilita esta tarea al reducir la componente irregular de la serie y, con ello, suavizar la línea. Para este propósito utilizaremos la función "geom_ma" del paquete "tidyquant".
+
+```{r day2_plot,, message=FALSE, warning=FALSE, fig.width = 15}
+library(tidyquant)
+
+colors <- c("Llamadas" = "darkgrey", "Media móvil (6 meses)" = "black")
+
+data %>%
+  ggplot() +
+  geom_line(aes(as.Date(Fecha), Llamadas, color = "Llamadas"), size = 1.5, alpha = 0.25) +
+  geom_ma(aes(as.Date(Fecha), Llamadas, color = "Media móvil (6 meses)"), n = 6, size = 1.2) +
+  labs(title = "Evolución anual de las llamadas pertinentes al servicio 016 de atención telefónica a víctimas de violencia de género", caption = "Fuente: Delegación del Gobierno contra la Violencia de Género | @jantleon", color = "") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y", limits = as.Date(c('2007-10-1', '2020-5-21')), expand=c(0,0)) +
+  ylab("") +
+  xlab("") +
+  scale_color_manual(values = colors) +
+  theme_minimal(base_family = "Bahnschrift", base_size = 16) +
+  ggsave("plots/day2.png", width = 18)
+
+```

@@ -1,0 +1,64 @@
+---
+title: "Día 23: Gráficos de proyección solar sobre información política en televisión"
+output: html_document
+---
+
+En esta ocasión vamos a hacer un gráfico de proyección solar con datos del CIS sobre población que se informa sobre política en televisión y los canales que elige para ello. Cargamos librerías.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(extrafont)
+library(rvest)
+```
+
+Descargamos de la versión de resultados en HTML del CIS los datos.
+
+```{r scrape-data, message=FALSE, warning=FALSE}
+url <- "http://www.cis.es/cis/export/sites/default/-Archivos/Marginales/3260_3279/3269/es3269mar.html"
+tablas <- read_html(url) %>% html_table()
+```
+
+Extraemos las tablas que nos interesan y que son la pregunta sobre con qué medios se informan los ciudadanos y la de qué canales de televisión utilizan para este objetivo.
+
+```{r select-tables, message=FALSE, warning=FALSE}
+t1 <- tablas[[29]][-nrow(tablas[[29]]),]
+t2 <- tablas[[35]][-nrow(tablas[[35]]),]
+```
+
+Adaptamos los datos para después poder hacer un gráfico del tipo que queremos.
+
+```{r data-cleansing, message=FALSE, warning=FALSE}
+t1 <- t1 %>% select(1, 5) %>% filter(X1 == "Televisión") %>% add_row(X1 = "No", X5 = "26,1") %>% mutate(X1=replace(X1, X1=="Televisión", "Sí")) %>% mutate(X5 = parse_number(X5, locale = locale(decimal_mark = ",")))
+t2 <- t2 %>% mutate(X2 = parse_number(X2, locale = locale(decimal_mark = ",")), X1 = ifelse(X2 > 2, X1, "Otros")) 
+t2 <- t2 %>% group_by(X1) %>% summarise(X5 = sum(X2)) %>% mutate(X5 = X5*0.739) %>% arrange(desc(X5))
+
+t1$nivel <- 1
+t2$nivel <- 2
+```
+
+Unimos las dos tablas junto con los niveles.
+
+```{r merge-tables, message=FALSE, warning=FALSE}
+data <- bind_rows(t1, t2)
+```
+
+Pintamos el gráfico.
+
+```{r plot, message=FALSE, warning=FALSE}
+data %>% ggplot(aes(x = nivel, y = X5, fill = reorder(X1, X5))) +
+  geom_col(width = 1, color = "lightgrey", size = 0.25, position = position_stack()) +
+  geom_text(aes(label = paste0(X1,"\n(", round(X5,1),"%)")), 
+                  size = 2, position = position_stack(vjust = 0.55)) +
+  coord_polar(theta = "y") +
+  scale_fill_brewer(palette = "Spectral") +
+  theme_void(base_size = 7, base_family ="Bahnschrift") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5),
+        plot.caption = element_text(hjust = 3.3, vjust = 3)) +
+  labs(title = "Porcentaje de población que se informa sobre política en televisión y canales más vistos",
+       subtitle = "(Noviembre de 2019)",
+       caption = "Fuente: Barómetro postelectoral del CIS (noviembre 2019) | @jantleon")
+
+ggsave("plots/day23.png", width = 6)
+```

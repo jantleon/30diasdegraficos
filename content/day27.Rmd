@@ -1,0 +1,42 @@
+---
+title: "Día 27: Gráfico animado de la valoración de José Luis Rodríguez Zapatero"
+date: "04/06/2020"
+output: html_document
+---
+
+Vamos a visualizar un gráfico animado en formato gif de la valoración del ex-presidente del Gobierno José Luis Rodríguez Zapatero. Para ello utilizaremos una serie temporal procedente del Centro de Investigaciones Sociológicas. ```gganimate```, ```transformr``` y ```gifski``` serán los paquetes no utilizados previamente que vamos a incorporar para hacer este gif animado.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lubridate)
+library(gganimate)
+library(transformr)
+library(gifski)
+```
+
+Cargamos los datos descargados del CIS y los limpiamos.
+
+```{r load-data, message=FALSE, warning=FALSE}
+data_raw <- read_csv("data/day27.csv")
+
+data_clean <- data_raw %>% 
+                pivot_longer(cols = 2:47, names_to = "fecha", values_to = "valor") %>% 
+                select(-1) %>% 
+                mutate(fecha = parse_date(str_sub(fecha, 1, 8), format = "%m-%Y"))
+```
+
+Visualizamos con ```ggplot2```, animamos con ```transition_reveal``` y guardamos el gráfico con ```animate```.
+
+```{r plot, message=FALSE, warning=FALSE}
+grafico <- ggplot(data_clean, aes(fecha, valor)) +
+      geom_line(color = "red", size = 1) +
+      labs(title = "Valoración media de José Luis Rodríguez Zapatero (2000-2011)", caption = "Fuente: CIS | @jantleon") +
+      ylab("") +
+      xlab("") +
+      theme_minimal(base_size = 12, base_family = "Bahnschrift") +
+      theme(plot.title = element_text(face = "bold", hjust = 0.5)) +
+      transition_reveal(fecha)
+
+animate(grafico, width = 2000, height = 1600, res = 300, duration = 8, renderer = gifski_renderer("plots/day27.gif"))
+```
+

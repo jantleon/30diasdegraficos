@@ -1,0 +1,69 @@
+---
+title: "Día 6: Gráfico de donut con resultado del referéndum de salida del Reino Unido de la Unión Europea"
+author: "José Antonio León Rosado"
+date: "17/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE
+)
+```
+
+Para este sexto día visualizaremos uno de los gráficos más comunes y que más polémica generan. En muchas publicaciones podemos ver gráficos de tarta o de donut, pero la realidad es que se basan en ángulos y los humanos tenemos problemas para comparar e identificar tamaños de esta geometría. Por eso y porque son fácilmente sustituibles por un gráfico de barras o una tabla, prefiero no utilizarlos. Sin embargo, en el reto se pide realizar un gráfico de donut, que no es más que un gráfico de tarta pero con un agujero dentro, así que vamos con ello.
+
+Primero descargaremos de Wikipedia los resultados del referéndum del Brexit celebrado en 2016 y en el que el 51.89% de los británicos eligieron abandonar la Unión Europea.
+
+```{r day6_loaddata, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(rvest)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+
+url <- "https://en.wikipedia.org/wiki/2016_United_Kingdom_European_Union_membership_referendum"
+html <- read_html(url)
+
+brexit <- html %>% 
+  html_nodes('.wikitable') %>%      
+  html_table(fill = TRUE)
+```
+
+Ahora transformamos el dataset y calculamos algunas métricas (valores máximos de x e y y la etiqueta y su posición) para realizar el gráfico de donut.
+
+```{r day6_tidydata, message=FALSE, warning=FALSE}
+brexit <- as.data.frame(brexit[[1]])
+brexit <- brexit %>% 
+            slice(2:3) %>% 
+            select("option" = 1, "votes" = 2, "perc" = 3)
+
+brexit$perc <- as.numeric(gsub("%","",brexit$perc))
+brexit$votes <- as.numeric(gsub(",","",brexit$votes))
+
+brexit$ymax = cumsum(brexit$perc)
+
+brexit$ymin = c(0, head(brexit$ymax, n=-1))
+
+brexit$labelPosition <- (brexit$ymax + brexit$ymin) / 2
+
+brexit$label <- paste0(brexit$option, "\n", brexit$perc, " %")
+```
+
+Por último, visualizamos.
+
+```{r day6_plot, fig.width=9, message=FALSE, warning=FALSE}
+
+brexit %>% 
+  ggplot(aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3.1, fill=option)) +
+    geom_rect() +
+    geom_text(x=3.5, aes(y=labelPosition, label=label), size=5, family = "Bahnschrift") +
+    coord_polar(theta="y") +
+    labs(title = "Resultado del referéndum sobre la salida de Reino Unido de la Unión Europea",
+       caption = "Fuente: Wikipedia | @jantleon") +
+    xlim(c(2, 4)) + # Sin esto sería un gráfico de tarta en lugar de uno de donut.
+    scale_fill_manual(values=c("dodgerblue3", "gold")) +
+    theme_void(base_family = "Bahnschrift") +
+    theme(legend.position = "none", plot.title = element_text(size = 13, face = "bold", hjust = 0.5)) +
+    scale_y_reverse() +
+    ggsave("plots/day6.png")
+```

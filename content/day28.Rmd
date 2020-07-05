@@ -1,0 +1,37 @@
+---
+title: "Día 28: Movilidad educativa entre padres e hijos en diagramas de cuerdas"
+date: "05/06/2020"
+output: html_document
+---
+
+Esta vez vamos a reutilizar datos del INE del día 17 sobre movilidad educativa entre padres e hijos para elaborar un diagrama de cuerdas con la librería ```circlize```.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(circlize)
+library(RColorBrewer)
+```
+
+Cargamos datos y los transformamos.
+
+```{r load-data, message=FALSE, warning=FALSE}
+data_raw <- read_csv("data/day28.csv")
+
+
+data_clean <- data_raw %>% 
+                pivot_longer(-hijo, names_to = "padre", values_to = "percent") %>% 
+                mutate(padre = factor(padre, levels =  unique(padre), ordered = T),
+                       hijo = factor(hijo, levels = c("Primaria o inferior", "Secundaria primera etapa", "Secundaria segunda etapa", "Superior"), ordered = T))
+
+niveles <- c("Primaria o inferior", "Secundaria primera etapa", "Secundaria segunda etapa", "Superior")
+grid.col = brewer.pal(4, "Set2")
+names(grid.col) = niveles
+```
+
+Visualizamos con ```chordDiagram```, que no es una función de ```ggplot2``` a diferencia del resto de gráficos del reto.
+
+```{r plot, message=FALSE, warning=FALSE}
+chordDiagram(data_clean, grid.col = grid.col)
+title(main = "Movilidad educativa intergeneracional (2011) \n Fuente: INE")
+```
+

@@ -1,0 +1,55 @@
+---
+title: "Día 26: Población que podría seguir sobrellevando el confinamiento con diagrama de Marimekko"
+date: "03/06/2020"
+output: html_document
+---
+
+En esta ocasión visualizaremos el porcentaje de la población que declaraba en junio de 2020 poder seguir sobrellevando el confinamiento debido al estado de alarma por coronavirus. El gráfico elegido será el diagrama de Marimekko.
+
+Comenzamos cargando las librerías necesarias, entre las que está ```ggmosaic```, que es la que permite hacer este diagrama.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(rvest)
+library(janitor)
+library(ggmosaic)
+```
+
+Scrapeamos el HTML de las tablas de la web del CIS y limpiamos los datos para adaptarlos a lo que requiere este diagrama.
+
+```{r scrape-data, message=FALSE, warning=FALSE}
+url <- "http://www.cis.es/cis/export/sites/default/-Archivos/Marginales/3280_3299/3283/cru3283edad.html"
+
+tablas_raw <- read_html(url) %>% html_table(fill = TRUE)
+
+data_clean <- tablas_raw[[6]] %>% 
+        slice(-c(1,7,8,9,10)) %>% 
+        select(-2, -9) %>% 
+        mutate(X1=replace(X1, X1=="", "Valores")) %>% 
+        row_to_names(row_number = 1) %>% 
+        mutate_at(vars(-1), parse_number, locale = locale(decimal_mark = ",")) %>% 
+        mutate_at(vars(-1), funs(. * 100 / sum(.))) %>% 
+        mutate_at(vars(-1), round, digits = 2) %>% 
+        pivot_longer(cols = `De 18 a 24 años`:`65 y más años`, names_to = "edad", values_to = "percent") %>% 
+        mutate(edad = factor(edad, levels = c("De 18 a 24 años", "De 25 a 34 años", "De 35 a 44 años", "De 45 a 54 años", "De 55 a 64 años", "65 y más años")),
+               Valores = factor(recode(Valores, `Sí, no tendría problema en nuevas prórrogas` = "Sí", `Sí, pero sólo con algunas medidas de desescalamiento (salir a dar un paseo, hacer actividades deportivas, etc.)` = "Sí, pero con medidas de desescalada", `No, pero si se aprobaran nuevas prórrogas tendría que resignarme` = "No, pero me resignaría", `No, no aguantaría una nueva prórroga` = "No"), levels = c("Sí", "Sí, pero con medidas de desescalada", "No, pero me resignaría", "No")))
+```
+
+Visualizamos con ```ggplot2```.
+
+```{r plot, message=FALSE, warning=FALSE, fig.align="center", fig.width=11}
+ggplot(data = data_clean) + 
+  geom_mosaic(aes(weight = percent, x = product(Valores),
+                             fill = edad), na.rm = T) +
+  labs(x = "", y = "",
+       title = "Porcentaje de la población que podría seguir sobrellevando el confinamiento por grupo de edad (junio 2020)",
+       subtitle = "Respecto al confinamiento, ¿podría seguir sobrellevando el aislamiento en su casa con nuevas prórrogas del estado de alarma?",
+       caption = "Fuente: CIS | @jantleon") +
+  theme_minimal(base_size = 10, base_family = "Bahnschrift") +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold"),
+        axis.text.y = element_text(margin=margin(0,-30,0,0)))
+
+ggsave("plots/day26.png", width = 11)
+```
+

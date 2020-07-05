@@ -1,0 +1,46 @@
+---
+title: "Día 24: Mapa de coropletas sobre población en riesgo de pobreza y/o exclusión social"
+output: html_document
+---
+
+Hoy haremos un mapa de coropletas con el porcentaje de población que está en riesgo de pobreza y/o exclusión social en cada país de la Unión Europea. Los datos geográficos y de pobreza los descargaremos con el paquete ```eurostat```.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(eurostat)
+library(scales)
+```
+
+Descargamos los datos geográficos y espaciales.
+
+```{r load-data, message=FALSE, warning=FALSE}
+geo <-
+  get_eurostat_geospatial(output_class = 'sf',
+                          resolution = '60', nuts_level = 0, year = 2016)
+
+data_raw <- get_eurostat('ilc_peps11', filters = list(time = 2018))
+```
+
+Creamos un dataframe que combine los datos espaciales con los de pobreza.
+
+```{r}
+data_joined <- inner_join(geo, data_raw, by = "geo") %>% filter(!is.na(values))
+```
+
+Visualizamos.
+
+```{r plot, message=FALSE, warning=FALSE}
+ggplot() +
+  geom_sf(data = data_joined, aes(fill = values), color = "grey", size = 0.03) +
+  coord_sf(xlim = c(-8, 30), ylim = c(33, 72)) +
+    labs(title = "Población en riesgo de pobreza y/o exclusión social (2018)", caption = "Fuente: Eurostat | @jantleon") +
+  scale_fill_gradient(low = "yellow2", high = "brown3", na.value = NA, labels = percent_format(scale = 1)) +
+  theme_void(base_family = "Bahnschrift", base_size = 7) +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5),
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        plot.caption = element_text(hjust = 1, vjust = 1.5),
+        legend.key.height=unit(0.5,"line"))
+
+ggsave("plots/day24.png", width = 8)
+```

@@ -1,0 +1,76 @@
+---
+title: "Día 22: Visualizando datos textuales de un artículo de prensa"
+author: "José Antonio León Rosado"
+date: "2/06/2020"
+output: html_document
+---
+
+Hoy vamos a crear una nube de palabras a partir de un artículo de John Carlin publicado en La Vanguardia y en el que alaba las cualidades físicas del presidente del Gobierno. Comenzamos cargando los paquetes y la fuente Bahnschrift.
+
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(rvest)
+library(ggwordcloud)
+library(tm)
+library(stringr)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+```
+
+Hacemos el scraping del texto del artículo.
+
+```{r scrape-data, message=FALSE, warning=FALSE}
+url <- "https://www.lavanguardia.com/politica/20200628/481998129000/paseo-presidencial.html"
+texto_raw <- read_html(url) %>% 
+          html_nodes('p') %>% 
+          html_text()
+
+texto_full <- paste(texto_raw[-c(6, 9, 10, 13, 17)], collapse = "")
+```
+
+Transformamos el texto para poder eliminar las palabras irrelevantes.
+
+```{r data-cleansing, message=FALSE, warning=FALSE}
+texto_full <-  iconv(texto_full, "utf-8")
+texto_full <- tolower(texto_full)
+texto_full <- Corpus(VectorSource(texto_full))
+texto_full <- tm_map(texto_full, removePunctuation)
+texto_full <- tm_map(texto_full, removeWords, stopwords('spanish'))
+
+palabras <- as.data.frame(strsplit(texto_full[["1"]][["content"]], " ")) %>% 
+              rename(palabra = 1)
+```
+
+Ahora filtramos las palabras que tienen más de dos caracteres para remover caracteres especiales como puntos o comas y palabras irrelevantes que no se hayan suprimido con el proceso anterior.
+
+```{r remove-stopwords, message=FALSE, warning=FALSE}
+palabras <- palabras %>% 
+                  filter(nchar(as.character(palabra)) > 2)
+```
+
+Añadimos un conteo de palabras para ver el número de ocasiones que aparece cada una de ellas.
+
+```{r count-words, message=FALSE, warning=FALSE}
+palabras <- palabras %>% 
+  group_by(palabra) %>% 
+  summarise(n = n()) %>% 
+  arrange(-n)
+```
+
+Por último visualizamos la nube de palabras.
+
+```{r plot, message=FALSE, warning=FALSE}
+set.seed(42)
+
+palabras %>% 
+  filter(n > 2) %>% 
+  ggplot(aes(label = palabra, size = n)) +
+  scale_size_area(max_size = 20) +
+  geom_text_wordcloud_area(family = "Bahnschrift") +
+  labs(title = "Nube de palabras del artículo 'Paseo presidencial' de John Carlin", subtitle = "La Vanguardia, 28/06/2020", caption = "@jantleon") +
+  theme_minimal(base_family = "Bahnschrift", base_size = 12) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5))
+
+ggsave("plots/day22.png")
+```

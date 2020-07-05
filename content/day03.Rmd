@@ -1,0 +1,73 @@
+---
+title: "Día 3: Gráfico de dispersión de porcentaje de obesidad por renta per cápita con inner join de tres tablas de datos"
+author: "José Antonio León Rosado"
+date: "15/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Día 3: Gráfico de dispersión de porcentaje de obesidad por renta per cápita con inner join de tres tablas de datos
+
+Hoy vamos a hacer un gráfico de dispersión para visualizar la relación entre el PIB per cápita y la tasa de obesidad en todo el mundo. Estos datos están dispersos en tres tablas, por lo que habrá que buscar variables comunes para hacer un inner join. Gracias a estas variables que están presentes en varios dataset a la vez, podemos combinar varias tablas sen solo una. En nuestro caso tenemos tres datasets: obesity, que contiene datos de obesidad por país (identificado por su nombre); gdp, con datos de PIB per cápita por país (también identificado por su nombre); y region, que contiene una lista de todos los países con su continente Combinando obesity con gdp en base al nombre y ésta tabla resultante con region, podemos tener un solo dataset con información sobre estas tres dimensiones por país.
+
+Primero cargamos cada una de las tablas.
+
+```{r day3_loaddata, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+
+obesity <- read_csv("https://raw.githubusercontent.com/owid/owid-datasets/master/datasets/Obesity%20Prevalence%20-%20WHO%20(2019)/Obesity%20Prevalence%20-%20WHO%20(2019).csv")
+gdp <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-05-21/per-capita-mismanaged-plastic-waste-vs-gdp-per-capita.csv")
+region <- read_csv("https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/all/all.csv")
+```
+
+Filtramos para quedarnos solo con datos de 2016, borramos las variables innecesarias y renombramos la de renta per cápita.
+
+```{r day3_tidydata, message=FALSE, warning=FALSE}
+obesity <- obesity %>% filter(Year == 2016)
+gdp <- gdp %>% filter(Year == 2016) %>% select(-c(4, 6)) %>% rename("GDP" = 4)
+```
+
+Hacemos el inner join de las tres tablas.
+
+```{r day3_innerjoin, message=FALSE, warning=FALSE}
+obegdp <- inner_join(gdp, region, by = c("Entity" = "name"))
+obegdp <- inner_join(obesity, obegdp, by = "Entity") %>% rename("Year" = 2, "obesity_rate_total" = 3) %>% select(1, 2, 3, 8, 13)
+```
+
+Recodificamos la variable con la que colorearemos los puntos del gráfico de dispersión para traducir los nombres al castellano.
+
+```{r day3_recodevariables, message=FALSE, warning=FALSE}
+obegdp <- obegdp %>%
+                mutate(region = case_when(region == 'Asia' ~ 'Asia',
+                       region == 'Europe' ~ 'Europa',
+                       region == 'Africa' ~ 'África',
+                       region == 'Americas' ~ 'América',
+                       region == 'Oceania' ~ 'Oceanía',
+                       TRUE ~ as.character(region)))
+```
+
+Cargamos las librerías "ggrepel" (para que las etiquetas del gráfico no se solapen con los puntos con "geom_text_repel") y "ggpubr" (para mostrar el coeficiente de correlación de Pearson con "stat_cor") y visualizamos el gráfico de dispersión.
+
+```{r day3_plot, message=FALSE, warning=FALSE}
+library(ggrepel)
+library(ggpubr)
+
+obegdp %>% 
+    ggplot() +
+    geom_line(aes(GDP, obesity_rate_total), stat = "smooth", method ="lm", alpha = 0.3, colour = "black", se = FALSE) +
+    geom_jitter(aes(GDP, obesity_rate_total, colour = region), size = 3)+
+    geom_text_repel(data = subset(obegdp, obesity_rate_total > 53 | GDP > 50000), aes(GDP, obesity_rate_total, label=Entity), segment.color = NA, vjust = -1, family = "Bahnschrift") +
+    stat_cor(aes(GDP, obesity_rate_total), method = "pearson", label.x = 80000, label.y = 75, family = "Bahnschrift") +
+    labs(title = "Porcentaje de población con obesidad por PIB per cápita (PPA)", caption = "Fuente: Our World in Data | @jantleon", colour = "Continente") +
+    ylab("% de población con obesidad") +
+    xlab("PIB per cápita") +
+    scale_y_continuous(limits = c(0,80)) +
+    theme_minimal(base_family = "Bahnschrift", base_size = 12) +
+    theme(plot.title = element_text(face = "bold")) +
+    ggsave("plots/day3.png", height = 6)
+```

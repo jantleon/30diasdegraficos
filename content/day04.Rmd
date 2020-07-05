@@ -1,0 +1,101 @@
+---
+title: "Día 4: Distribución de edad por equipo World Tour en la temporada 2020 (con facets y web scraping)"
+author: "José Antonio León Rosado"
+date: "15/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+En esta ocasión vamos a generar un gráfico donde cada categoría se visualice en una faceta. De esta forma podremos comparar la distribución por edad de los distintos equipos ciclistas de la categoría World Tour durante la temporada 2020. 
+Los datos se obtienen por web scraping de la web Pro Cycling Stats, que tiene una amplia base de datos sobre ciclismo almacenada en su propia página web. Como estos datos no están compartidos para su descarga, tenemos que rastrear el código HTML de la página para poder descargar los datos de nuestro interés. En esto consiste el web scraping y para ello hemos creado la función "get_riders", que permite descargar las variables corredor, edad, link personal con información detallada, equipo y categoría. Mediante los parámetros category y year se puede personalizar la consulta a la web para que muestre los corredores de categorías UCI, continental y femenino. En esta primera pieza de código cargamos las librerías "rvest" y "xml2" para el scraping y generamos la función "get_rider".
+
+```{r day4_createscrapefunction, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(rvest)
+library(xml2)
+
+windowsFonts("Bahnschrift" = windowsFont("Bahnschrift"))
+
+get_riders <- function(category, year){
+url <- paste0("https://www.procyclingstats.com/teams.php&s=", category ,"&year=", year)
+
+url_html <- read_html(url)
+
+teams <- url_html %>% 
+  html_nodes('.teamOvShirt') %>% 
+  html_attr('href')
+
+team_list <- c()
+
+for (team in teams){
+  team_list <- c(team_list, paste0("https://www.procyclingstats.com/team/", team))
+}
+
+
+ciclistasdf = data.frame()
+
+for (team in team_list){
+url_html <- read_html(team)
+
+age <- url_html %>% 
+    html_nodes('.age') %>%      
+    html_text()
+
+rider <- url_html %>% 
+  html_nodes('.rider') %>%      
+  html_text()
+
+href <- url_html %>% 
+  html_nodes('.rider') %>%
+  html_attr('href')
+
+team <- url_html %>% 
+  html_nodes('.entry') %>%
+  html_text()
+
+team_df <- data.frame(rider, age, href, team)
+ciclistasdf <- rbind(ciclistasdf, team_df)}
+
+ciclistasdf <- ciclistasdf %>% separate(team, c("team",NA), sep ="»")
+ciclistasdf <- ciclistasdf %>% separate(team, c("team","category"), sep ="\\(")
+
+ciclistasdf <- ciclistasdf %>% mutate(category = str_sub(category, 1, str_length(category)-1))
+
+return(ciclistasdf)
+}
+```
+
+Ahora la aplicamos para la categoría World Tour (poniendo entre comillas worldtour tal como aparece en el link de la web que muestra todos los equipos) y el año 2020.
+
+```{r day4_scrapedata, message=FALSE, warning=FALSE}
+ciclistas <- get_riders("worldtour", 2020)
+```
+Por último, cargamos el paquete "lemon" para conservar el eje en cada facet y creamos el gráfico. Se trata de un histograma para cada equipo y una media 
+
+```{r day4_plot, message=FALSE, warning=FALSE, fig.width = 10}
+library(lemon)
+
+ciclistas$age <- as.numeric(ciclistas$age)
+
+ciclistas <- ciclistas %>% 
+  group_by(team) %>% 
+  mutate(avgage = round(mean(age),1))
+
+ciclistas %>% 
+  filter(category == "WT") %>% 
+  ggplot(aes(age)) +
+  geom_histogram(stat = "count", fill = "firebrick") +
+  scale_x_continuous(breaks = seq(from = 19, to = 40, by = 3)) +
+  facet_rep_wrap(~team, repeat.tick.labels = TRUE) +
+  geom_text(aes(label=paste("Media:",avgage)), size = 2.5, x = 37, y = 6, family = "Bahnschrift") +
+  labs(title = "Distribución de edad por equipo", subtitle ="Categoría World Tour, temporada 2020", caption = "Fuente: ProCyclingStats | @jantleon") +
+  ylab("") +
+  xlab("") +
+  theme_minimal(base_family = "Bahnschrift", base_size = 12) +
+  theme(plot.title = element_text(face = "bold")) +
+  ggsave("plots/day4.png", width = 9)
+```
